@@ -23,7 +23,7 @@ class NotesDB:
         )
         self.conn.commit()
 
-    def add_note(self, title, content, pinned=0, encrypted=0):
+    def add_note(self, title='-', content='-', pinned=0, encrypted=0):
         current_timestamp = int(time.time())
         self.cursor.execute(
             '''
@@ -38,7 +38,8 @@ class NotesDB:
         self.cursor.execute(
             '''
             SELECT id, title, created, last_modified, pinned, encrypted
-            FROM notes;
+            FROM notes
+            ORDER BY pinned DESC, last_modified DESC
             '''
         )
         return self.cursor.fetchall()

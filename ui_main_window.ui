@@ -44,6 +44,11 @@
           </property>
           <item>
            <property name="text">
+            <string>Menu</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
             <string>New</string>
            </property>
           </item>
