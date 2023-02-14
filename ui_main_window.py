@@ -10,6 +10,7 @@
 
 from PyQt5.QtGui import QColor
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtGui import QKeySequence
 from backend import NotesDB
 
 
@@ -30,6 +31,8 @@ class Ui_MainWindow(object):
         self.comboBox = QtWidgets.QComboBox(self.centralwidget)
         self.comboBox.setCurrentText("")
         self.comboBox.setObjectName("comboBox")
+        self.comboBox.addItem("")
+        self.comboBox.addItem("")
         self.comboBox.addItem("")
         self.comboBox.addItem("")
         self.comboBox.addItem("")
@@ -82,12 +85,14 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.comboBox.setPlaceholderText(_translate("MainWindow", "Menu"))
-        self.comboBox.setItemText(0, _translate("MainWindow", "New"))
-        self.comboBox.setItemText(1, _translate("MainWindow", "Save"))
-        self.comboBox.setItemText(2, _translate("MainWindow", "Info"))
-        self.comboBox.setItemText(3, _translate("MainWindow", "Import"))
-        self.comboBox.setItemText(4, _translate("MainWindow", "Export"))
-        self.comboBox.setItemText(5, _translate("MainWindow", "Settings"))
+        self.comboBox.setItemText(0, _translate("MainWindow", "Menu"))
+        self.comboBox.setItemText(1, _translate("MainWindow", "New"))
+        self.comboBox.setItemText(2, _translate("MainWindow", "Save"))
+        self.comboBox.setItemText(3, _translate("MainWindow", "Delete"))
+        self.comboBox.setItemText(4, _translate("MainWindow", "Info"))
+        self.comboBox.setItemText(5, _translate("MainWindow", "Import"))
+        self.comboBox.setItemText(6, _translate("MainWindow", "Export"))
+        self.comboBox.setItemText(7, _translate("MainWindow", "Settings"))
         self.lineEdit_searchall.setPlaceholderText(
             _translate("MainWindow", "Search All")
         )
@@ -99,25 +104,28 @@ class Ui_MainWindow(object):
 
         self.add_data_listview()
 
-        # self.listWidget.itemActivated.connect(
-        #    lambda x: self.set_textedit_text(x.data(QtCore.Qt.UserRole))
-        # )
-
-        # self.listWidget.clicked.connect(
-        #    lambda x: self.set_textedit_text(x.data(QtCore.Qt.UserRole))
-        # )
-
         self.listWidget.currentItemChanged.connect(
             lambda x: self.set_textedit_text(x.data(QtCore.Qt.UserRole))
             if x is not None
             else x
         )
 
+        self.shortcut = QtWidgets.QShortcut(QKeySequence('Ctrl+S'), self)
+        self.shortcut.activated.connect(lambda: self.combobox_changed(txt='Save'))
+
+
+
 
     note_db = NotesDB()
 
-    def add_data_listview(self):
-        # Creates a QListWidgetItem
+    saved_flag = False
+    def add_data_listview(self, saved_flag=False):
+        # Refresh listview
+        if saved_flag:
+            current_item_data = self.listWidget.currentItem().data(QtCore.Qt.UserRole)
+            current_id = current_item_data[0]
+            self.saved_flag = True
+
         self.listWidget.clear()
         list_of_notes = self.note_db.get_list_of_notes()
         for note in list_of_notes:
@@ -128,7 +136,19 @@ class Ui_MainWindow(object):
             item_to_add.setData(QtCore.Qt.UserRole, (note[0], note[4]))
             self.listWidget.addItem(item_to_add)
 
+        if saved_flag:
+            for item_index in range(self.listWidget.count()):  
+                    item_data = self.listWidget.item(item_index).data(QtCore.Qt.UserRole) 
+                    id = item_data[0]
+                    if id == current_id:
+                        self.listWidget.setCurrentRow(item_index)
+
     def set_textedit_text(self, metadata):
+        print('Entering set_text method')
+        if self.saved_flag:
+            self.saved_flag = False
+            return
+        print('Setting text now')
         id = metadata[0]
         note = self.note_db.get_note_by_id(id)
         self.textEdit.setText(note[2])
@@ -149,4 +169,20 @@ class Ui_MainWindow(object):
 
 
         if txt == "Save":
-            self.listWidget.setCurrentRow(0)
+            #self.listWidget.setCurrentRow(0)
+            current_item_data = self.listWidget.currentItem().data(QtCore.Qt.UserRole)
+            id = current_item_data[0]
+            print('aca loco?')
+            self.note_db.update_note(id, self.lineEdit_title.text(), self.textEdit.toPlainText(), 0, 0)
+            self.add_data_listview(saved_flag=True)
+        
+        if txt == "Delete":
+            #self.note_db.delete_note()
+            if self.listWidget.currentItem() is not None:
+                data = self.listWidget.currentItem().data(QtCore.Qt.UserRole)
+                id = data[0]
+                self.note_db.delete_note(id)
+                self.add_data_listview()
+
+        
+        self.comboBox.setCurrentIndex(0)
