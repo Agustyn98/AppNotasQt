@@ -75,14 +75,14 @@
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="lineEdit">
+         <widget class="QLineEdit" name="lineEdit_searchall">
           <property name="placeholderText">
            <string>Search All</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="lineEdit_2">
+         <widget class="QLineEdit" name="lineEdit_searchnote">
           <property name="placeholderText">
            <string>Search Note</string>
           </property>
@@ -98,7 +98,14 @@
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_3" stretch="1,4">
           <item>
-           <widget class="QLineEdit" name="lineEdit_3"/>
+           <widget class="QLineEdit" name="lineEdit_title">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+           </widget>
           </item>
           <item>
            <widget class="QTextEdit" name="textEdit"/>

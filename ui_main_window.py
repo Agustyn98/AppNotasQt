@@ -9,7 +9,6 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-
 from backend import NotesDB
 
 
@@ -37,12 +36,12 @@ class Ui_MainWindow(object):
         self.comboBox.addItem("")
         self.comboBox.addItem("")
         self.horizontalLayout_3.addWidget(self.comboBox)
-        self.lineEdit = QtWidgets.QLineEdit(self.centralwidget)
-        self.lineEdit.setObjectName("lineEdit")
-        self.horizontalLayout_3.addWidget(self.lineEdit)
-        self.lineEdit_2 = QtWidgets.QLineEdit(self.centralwidget)
-        self.lineEdit_2.setObjectName("lineEdit_2")
-        self.horizontalLayout_3.addWidget(self.lineEdit_2)
+        self.lineEdit_searchall = QtWidgets.QLineEdit(self.centralwidget)
+        self.lineEdit_searchall.setObjectName("lineEdit_searchall")
+        self.horizontalLayout_3.addWidget(self.lineEdit_searchall)
+        self.lineEdit_searchnote = QtWidgets.QLineEdit(self.centralwidget)
+        self.lineEdit_searchnote.setObjectName("lineEdit_searchnote")
+        self.horizontalLayout_3.addWidget(self.lineEdit_searchnote)
         self.horizontalLayout_3.setStretch(0, 3)
         self.horizontalLayout_3.setStretch(1, 3)
         self.horizontalLayout_3.setStretch(2, 3)
@@ -52,9 +51,21 @@ class Ui_MainWindow(object):
         self.listWidget = QtWidgets.QListWidget(self.centralwidget)
         self.listWidget.setObjectName("listWidget")
         self.horizontalLayout.addWidget(self.listWidget)
+        self.verticalLayout_3 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_3.setObjectName("verticalLayout_3")
+        self.lineEdit_title = QtWidgets.QLineEdit(self.centralwidget)
+        font = QtGui.QFont()
+        font.setBold(True)
+        font.setWeight(75)
+        self.lineEdit_title.setFont(font)
+        self.lineEdit_title.setObjectName("lineEdit_title")
+        self.verticalLayout_3.addWidget(self.lineEdit_title)
         self.textEdit = QtWidgets.QTextEdit(self.centralwidget)
         self.textEdit.setObjectName("textEdit")
-        self.horizontalLayout.addWidget(self.textEdit)
+        self.verticalLayout_3.addWidget(self.textEdit)
+        self.verticalLayout_3.setStretch(0, 1)
+        self.verticalLayout_3.setStretch(1, 4)
+        self.horizontalLayout.addLayout(self.verticalLayout_3)
         self.horizontalLayout.setStretch(0, 1)
         self.horizontalLayout.setStretch(1, 4)
         self.verticalLayout.addLayout(self.horizontalLayout)
@@ -76,23 +87,36 @@ class Ui_MainWindow(object):
         self.comboBox.setItemText(3, _translate("MainWindow", "Import"))
         self.comboBox.setItemText(4, _translate("MainWindow", "Export"))
         self.comboBox.setItemText(5, _translate("MainWindow", "Settings"))
-        self.lineEdit.setPlaceholderText(_translate("MainWindow", "Search All"))
-        self.lineEdit_2.setPlaceholderText(_translate("MainWindow", "Search Note"))
+        self.lineEdit_searchall.setPlaceholderText(_translate("MainWindow", "Search All"))
+        self.lineEdit_searchnote.setPlaceholderText(_translate("MainWindow", "Search Note"))
+
         self.add_data_listview()
+
         self.listWidget.itemActivated.connect(
             lambda x: self.set_textedit_text(x.data(QtCore.Qt.UserRole))
         )
 
+        self.listWidget.clicked.connect(
+            lambda x: self.set_textedit_text(x.data(QtCore.Qt.UserRole))
+        )
+        
+        self.listWidget.currentItemChanged.connect(
+            lambda x: self.set_textedit_text(x.data(QtCore.Qt.UserRole))
+        )
+
+
+    note_db = NotesDB()
+
     def add_data_listview(self):
         # Creates a QListWidgetItem
-        note_db = NotesDB()
-        list_of_notes = note_db.get_list_of_notes()
+        list_of_notes = self.note_db.get_list_of_notes()
         for note in list_of_notes:
             item_to_add = QtWidgets.QListWidgetItem()
             item_to_add.setText(note[1])
             item_to_add.setData(QtCore.Qt.UserRole, note[0])
             self.listWidget.addItem(item_to_add)
 
-    def set_textedit_text(self, txt):
-        txt = str(txt)
-        self.textEdit.setText(txt)
+    def set_textedit_text(self, id):
+        note = self.note_db.get_note_by_id(id)
+        self.textEdit.setText(note[2])
+        self.lineEdit_title.setText(note[1])
