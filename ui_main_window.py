@@ -10,6 +10,8 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+from backend import NotesDB
+
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -33,6 +35,7 @@ class Ui_MainWindow(object):
         self.comboBox.addItem("")
         self.comboBox.addItem("")
         self.comboBox.addItem("")
+        self.comboBox.addItem("")
         self.horizontalLayout_3.addWidget(self.comboBox)
         self.lineEdit = QtWidgets.QLineEdit(self.centralwidget)
         self.lineEdit.setObjectName("lineEdit")
@@ -46,9 +49,9 @@ class Ui_MainWindow(object):
         self.verticalLayout.addLayout(self.horizontalLayout_3)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        self.listView = QtWidgets.QListView(self.centralwidget)
-        self.listView.setObjectName("listView")
-        self.horizontalLayout.addWidget(self.listView)
+        self.listWidget = QtWidgets.QListWidget(self.centralwidget)
+        self.listWidget.setObjectName("listWidget")
+        self.horizontalLayout.addWidget(self.listWidget)
         self.textEdit = QtWidgets.QTextEdit(self.centralwidget)
         self.textEdit.setObjectName("textEdit")
         self.horizontalLayout.addWidget(self.textEdit)
@@ -72,5 +75,24 @@ class Ui_MainWindow(object):
         self.comboBox.setItemText(2, _translate("MainWindow", "Info"))
         self.comboBox.setItemText(3, _translate("MainWindow", "Import"))
         self.comboBox.setItemText(4, _translate("MainWindow", "Export"))
+        self.comboBox.setItemText(5, _translate("MainWindow", "Settings"))
         self.lineEdit.setPlaceholderText(_translate("MainWindow", "Search All"))
         self.lineEdit_2.setPlaceholderText(_translate("MainWindow", "Search Note"))
+        self.add_data_listview()
+        self.listWidget.itemActivated.connect(
+            lambda x: self.set_textedit_text(x.data(QtCore.Qt.UserRole))
+        )
+
+    def add_data_listview(self):
+        # Creates a QListWidgetItem
+        note_db = NotesDB()
+        list_of_notes = note_db.get_list_of_notes()
+        for note in list_of_notes:
+            item_to_add = QtWidgets.QListWidgetItem()
+            item_to_add.setText(note[1])
+            item_to_add.setData(QtCore.Qt.UserRole, note[0])
+            self.listWidget.addItem(item_to_add)
+
+    def set_textedit_text(self, txt):
+        txt = str(txt)
+        self.textEdit.setText(txt)

@@ -93,10 +93,17 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,4">
         <item>
-         <widget class="QListView" name="listView"/>
+         <widget class="QListWidget" name="listWidget"/>
         </item>
         <item>
-         <widget class="QTextEdit" name="textEdit"/>
+         <layout class="QVBoxLayout" name="verticalLayout_3" stretch="1,4">
+          <item>
+           <widget class="QLineEdit" name="lineEdit_3"/>
+          </item>
+          <item>
+           <widget class="QTextEdit" name="textEdit"/>
+          </item>
+         </layout>
         </item>
        </layout>
       </item>

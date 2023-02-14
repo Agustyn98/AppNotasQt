@@ -2,7 +2,7 @@ import sqlite3
 import time
 
 class NotesDB:
-    def __init__(self, db_file):
+    def __init__(self, db_file='notes.db'):
         self.conn = sqlite3.connect(db_file)
         self.cursor = self.conn.cursor()
         self.create_table()
@@ -102,7 +102,8 @@ if __name__ == '__main__':
 
     # add a new note
     db.add_note('Test note', 'This is a test note', 1, 0)
-
+    db.add_note('Test note 2', '2', 0, 0)
+    quit()
     # retrieve a list of all notes
     list_of_notes = db.get_list_of_notes()
     print('List of notes:', list_of_notes)
