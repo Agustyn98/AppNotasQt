@@ -12,11 +12,29 @@ from PyQt5.QtGui import QColor
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QKeySequence
 from backend import NotesDB
+from PyQt5.QtGui import QKeyEvent
+
 
 
 class Ui_MainWindow(object):
+    class MyListWidget(QtWidgets.QListWidget):
+        def keyPressEvent(self, event: QKeyEvent) -> None:
+            if event.key() == QtCore.Qt.Key.Key_Up or event.key() == QtCore.Qt.Key.Key_Down:
+                #print("Key Pressed:", event.key())
+                self.check_changes_before_leaving()
+                super().keyPressEvent(event)
+        
+        def check_changes_before_leaving(self):
+            main_window_instance = Ui_MainWindow()
+            print(f'Are there unsaved changes?? {main_window_instance.unsaved_changes}')
+            if main_window_instance.unsaved_changes:
+                print('Are you sure you want to leave?')
+                
+
+
+    app_title_str = 'AppNotas'
     def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
+        self.MainWindow = MainWindow
         MainWindow.resize(800, 600)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
@@ -50,9 +68,6 @@ class Ui_MainWindow(object):
         self.checkbox_pin = QtWidgets.QCheckBox("🏱", self.centralwidget)
         self.checkbox_pin.setObjectName("checkbox_pin")
         self.horizontalLayout_3.addWidget(self.checkbox_pin)
-        self.checkbox_encryption = QtWidgets.QCheckBox("🔒🔓", self.centralwidget)
-        self.checkbox_encryption.setObjectName("checkbox_encryption")
-        self.horizontalLayout_3.addWidget(self.checkbox_encryption)
         self.horizontalLayout_3.setStretch(0, 3)
         self.horizontalLayout_3.setStretch(1, 3)
         self.horizontalLayout_3.setStretch(2, 3)
@@ -60,7 +75,8 @@ class Ui_MainWindow(object):
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.listWidget = QtWidgets.QListWidget(self.centralwidget)
-        self.listWidget.setObjectName("listWidget")
+        self.listWidget = self.MyListWidget(self.centralwidget)
+        #self.listWidget.setObjectName("listWidget")
         self.horizontalLayout.addWidget(self.listWidget)
         self.verticalLayout_3 = QtWidgets.QVBoxLayout()
         self.verticalLayout_3.setObjectName("verticalLayout_3")
@@ -84,13 +100,12 @@ class Ui_MainWindow(object):
         self.verticalLayout.setStretch(1, 95)
         self.verticalLayout_2.addLayout(self.verticalLayout)
         MainWindow.setCentralWidget(self.centralwidget)
-
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", self.app_title_str))
         self.comboBox.setPlaceholderText(_translate("MainWindow", "Menu"))
         self.comboBox.setItemText(0, _translate("MainWindow", "Menu"))
         self.comboBox.setItemText(1, _translate("MainWindow", "New"))
@@ -117,8 +132,12 @@ class Ui_MainWindow(object):
             else x
         )
 
+        #self.listWidget.keyPressEvent = self.list_key_press_event
+
         self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+S"), self)
         self.shortcut.activated.connect(lambda: self.combobox_changed(txt="Save"))
+
+        self.textEdit.textChanged.connect(lambda: self.unsaved_changes_text())
 
     note_db = NotesDB()
 
@@ -147,6 +166,8 @@ class Ui_MainWindow(object):
                 id = item_data[0]
                 if id == current_id:
                     self.listWidget.setCurrentRow(item_index)
+        
+        self.unsaved_changes = False
 
     def refresh_pin_checkbox(self):
         current_item_data = self.listWidget.currentItem().data(QtCore.Qt.UserRole)
@@ -159,9 +180,14 @@ class Ui_MainWindow(object):
             self.checkbox_pin.setText("🏱")
 
     def set_textedit_text(self, metadata):
+
         if self.saved_flag:
             self.saved_flag = False
             return
+
+        if self.unsaved_changes:
+            self.unsaved_changes = False
+
         id = metadata[0]
         note = self.note_db.get_note_by_id(id)
         self.textEdit.setText(note[2])
@@ -183,6 +209,8 @@ class Ui_MainWindow(object):
 
         if txt == "Save":
             # self.listWidget.setCurrentRow(0)
+            self.unsaved_changes = False
+            self.MainWindow.setWindowTitle(self.app_title_str)
             current_item_data = self.listWidget.currentItem().data(QtCore.Qt.UserRole)
             id = current_item_data[0]
             pin = 1 if self.checkbox_pin.isChecked() else 0
@@ -200,3 +228,15 @@ class Ui_MainWindow(object):
                 self.add_data_listview()
 
         self.comboBox.setCurrentIndex(0)
+
+    unsaved_changes = False 
+    def unsaved_changes_text(self):
+        if not self.unsaved_changes:
+            print('changing window')
+            self.MainWindow.setWindowTitle('* ' + self.app_title_str + ' *')
+        self.unsaved_changes = True
+    
+    def list_key_press_event(self, event: QKeyEvent):
+        print("Key Pressed:", event.key())
+        #self.listWidget.keyPressEvent(event)
+

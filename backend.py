@@ -64,7 +64,6 @@ class NotesDB:
             ''',
             (title, content, current_timestamp, pinned, id)
         )
-        print('executing updoot?? ')
         self.conn.commit()
 
     def delete_note(self, id):
