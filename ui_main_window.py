@@ -46,6 +46,13 @@ class Ui_MainWindow(object):
         self.lineEdit_searchnote = QtWidgets.QLineEdit(self.centralwidget)
         self.lineEdit_searchnote.setObjectName("lineEdit_searchnote")
         self.horizontalLayout_3.addWidget(self.lineEdit_searchnote)
+        # Buttons
+        self.checkbox_pin = QtWidgets.QCheckBox("🏱", self.centralwidget)
+        self.checkbox_pin.setObjectName("checkbox_pin")
+        self.horizontalLayout_3.addWidget(self.checkbox_pin)
+        self.checkbox_encryption = QtWidgets.QCheckBox("🔒🔓", self.centralwidget)
+        self.checkbox_encryption.setObjectName("checkbox_encryption")
+        self.horizontalLayout_3.addWidget(self.checkbox_encryption)
         self.horizontalLayout_3.setStretch(0, 3)
         self.horizontalLayout_3.setStretch(1, 3)
         self.horizontalLayout_3.setStretch(2, 3)
@@ -110,15 +117,13 @@ class Ui_MainWindow(object):
             else x
         )
 
-        self.shortcut = QtWidgets.QShortcut(QKeySequence('Ctrl+S'), self)
-        self.shortcut.activated.connect(lambda: self.combobox_changed(txt='Save'))
-
-
-
+        self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+S"), self)
+        self.shortcut.activated.connect(lambda: self.combobox_changed(txt="Save"))
 
     note_db = NotesDB()
 
     saved_flag = False
+
     def add_data_listview(self, saved_flag=False):
         # Refresh listview
         if saved_flag:
@@ -131,58 +136,67 @@ class Ui_MainWindow(object):
         for note in list_of_notes:
             item_to_add = QtWidgets.QListWidgetItem()
             if note[4] == 1:
-                item_to_add.setBackground(QColor('yellow'))
+                item_to_add.setBackground(QColor("yellow"))
             item_to_add.setText(note[1])
             item_to_add.setData(QtCore.Qt.UserRole, (note[0], note[4]))
             self.listWidget.addItem(item_to_add)
 
         if saved_flag:
-            for item_index in range(self.listWidget.count()):  
-                    item_data = self.listWidget.item(item_index).data(QtCore.Qt.UserRole) 
-                    id = item_data[0]
-                    if id == current_id:
-                        self.listWidget.setCurrentRow(item_index)
+            for item_index in range(self.listWidget.count()):
+                item_data = self.listWidget.item(item_index).data(QtCore.Qt.UserRole)
+                id = item_data[0]
+                if id == current_id:
+                    self.listWidget.setCurrentRow(item_index)
+
+    def refresh_pin_checkbox(self):
+        current_item_data = self.listWidget.currentItem().data(QtCore.Qt.UserRole)
+        pin = current_item_data[1]
+        if pin == 1:
+            self.checkbox_pin.setChecked(True)
+            self.checkbox_pin.setText("🏲")
+        else:
+            self.checkbox_pin.setChecked(False)
+            self.checkbox_pin.setText("🏱")
 
     def set_textedit_text(self, metadata):
-        print('Entering set_text method')
         if self.saved_flag:
             self.saved_flag = False
             return
-        print('Setting text now')
         id = metadata[0]
         note = self.note_db.get_note_by_id(id)
         self.textEdit.setText(note[2])
         self.lineEdit_title.setText(note[1])
+        self.refresh_pin_checkbox()
 
     def combobox_changed(self, txt):
         # print(txt)
         if txt == "New":
             self.note_db.add_note()
             self.add_data_listview()
-            for item_index in range(self.listWidget.count()):  
-                item_data = self.listWidget.item(item_index).data(QtCore.Qt.UserRole) 
+            for item_index in range(self.listWidget.count()):
+                item_data = self.listWidget.item(item_index).data(QtCore.Qt.UserRole)
                 pin = item_data[1]
                 if pin == 0:
                     self.listWidget.setCurrentRow(item_index)
                     self.lineEdit_title.setFocus()
                     break
 
-
         if txt == "Save":
-            #self.listWidget.setCurrentRow(0)
+            # self.listWidget.setCurrentRow(0)
             current_item_data = self.listWidget.currentItem().data(QtCore.Qt.UserRole)
             id = current_item_data[0]
-            print('aca loco?')
-            self.note_db.update_note(id, self.lineEdit_title.text(), self.textEdit.toPlainText(), 0, 0)
+            pin = 1 if self.checkbox_pin.isChecked() else 0
+            self.note_db.update_note(
+                id, self.lineEdit_title.text(), self.textEdit.toPlainText(), pin
+            )
             self.add_data_listview(saved_flag=True)
-        
+
         if txt == "Delete":
-            #self.note_db.delete_note()
+            # self.note_db.delete_note()
             if self.listWidget.currentItem() is not None:
                 data = self.listWidget.currentItem().data(QtCore.Qt.UserRole)
                 id = data[0]
                 self.note_db.delete_note(id)
                 self.add_data_listview()
 
-        
         self.comboBox.setCurrentIndex(0)

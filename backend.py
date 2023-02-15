@@ -16,28 +16,27 @@ class NotesDB:
                 content TEXT,
                 created TEXT,
                 last_modified TEXT,
-                pinned INTEGER,
-                encrypted INTEGER 
+                pinned INTEGER
             );
             '''
         )
         self.conn.commit()
 
-    def add_note(self, title='-', content='-', pinned=0, encrypted=0):
+    def add_note(self, title='-', content='-', pinned=0):
         current_timestamp = int(time.time())
         self.cursor.execute(
             '''
-            INSERT INTO notes (title, content, created, last_modified, pinned, encrypted)
-            VALUES (?,?,?,?,?,?);
+            INSERT INTO notes (title, content, created, last_modified, pinned)
+            VALUES (?,?,?,?,?);
             ''',
-            (title, content, current_timestamp, current_timestamp, pinned, encrypted)
+            (title, content, current_timestamp, current_timestamp, pinned)
         )
         self.conn.commit()
 
     def get_list_of_notes(self):
         self.cursor.execute(
             '''
-            SELECT id, title, created, last_modified, pinned, encrypted
+            SELECT id, title, created, last_modified, pinned
             FROM notes
             ORDER BY pinned DESC, last_modified DESC
             '''
@@ -47,7 +46,7 @@ class NotesDB:
     def get_note_by_id(self, id):
         self.cursor.execute(
             '''
-            SELECT id, title, content, created, last_modified, pinned, encrypted
+            SELECT id, title, content, created, last_modified, pinned
             FROM notes
             WHERE id=?;
             ''',
@@ -55,15 +54,15 @@ class NotesDB:
         )
         return self.cursor.fetchone()
 
-    def update_note(self, id, title, content, pinned, encrypted):
+    def update_note(self, id, title, content, pinned):
         current_timestamp = int(time.time())
         self.cursor.execute(
             '''
             UPDATE notes
-            SET title=?, content=?, last_modified=?, pinned=?, encrypted=?
+            SET title=?, content=?, last_modified=?, pinned=?
             WHERE id=?;
             ''',
-            (title, content, current_timestamp, pinned, encrypted, id)
+            (title, content, current_timestamp, pinned, id)
         )
         print('executing updoot?? ')
         self.conn.commit()
@@ -89,7 +88,7 @@ class NotesDB:
     def search_notes(self, word):
         self.cursor.execute(
             '''
-            SELECT id, title, created, last_modified, pinned, encrypted
+            SELECT id, title, created, last_modified, pinned
             FROM notes
             WHERE title LIKE ? OR content LIKE ?;
             ''',
@@ -103,8 +102,8 @@ if __name__ == '__main__':
     db = NotesDB('notes.db')
 
     # add a new note
-    db.add_note('Test note', 'This is a test note', 1, 0)
-    db.add_note('Test note 2', '2', 0, 0)
+    db.add_note('Test note', 'This is a test note', 1)
+    db.add_note('Test note 2', '2', 0)
     quit()
     # retrieve a list of all notes
     list_of_notes = db.get_list_of_notes()
