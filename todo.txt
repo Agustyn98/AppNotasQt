@@ -1,1 +1,1 @@
-Data is getting changed to another index when saved by clicking another item and saving via popup
+Better colors for QListWidget
