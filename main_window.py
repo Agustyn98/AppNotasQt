@@ -12,9 +12,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
-    font = QFont()
-    font.setPointSize(17)
-    app.setFont(font)
     window = MainWindow()
     window.show()
     sys.exit(app.exec_())
