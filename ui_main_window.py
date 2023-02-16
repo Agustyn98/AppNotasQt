@@ -36,7 +36,6 @@ class Ui_MainWindow(object):
                 event.key() == QtCore.Qt.Key.Key_Up
                 or event.key() == QtCore.Qt.Key.Key_Down
             ):
-                print("Key Pressed:", event.key())
                 check = self.check_changes_before_leaving()
                 if check == "cancel":
                     return
@@ -46,9 +45,6 @@ class Ui_MainWindow(object):
                 self.outer_instance.lineEdit_title.setFocus()
 
         def check_changes_before_leaving(self):
-            print(
-                f"Are there unsaved changes(from listwidget key press)?? {Ui_MainWindow.unsaved_changes}"
-            )
             if Ui_MainWindow.unsaved_changes:
                 msgBox = QtWidgets.QMessageBox()
                 msgBox.setText("Save changes?")
@@ -79,6 +75,9 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         self.MainWindow = MainWindow
         self.MainWindow.keyPressEvent = self.newOnkeyPressEvent
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        MainWindow.setFont(font)
         MainWindow.resize(800, 600)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
@@ -102,8 +101,6 @@ class Ui_MainWindow(object):
         self.comboBox.addItem("")
         self.comboBox.addItem("")
         self.horizontalLayout_3.addWidget(self.comboBox)
-        self.button_reset_search = QtWidgets.QPushButton("Reset", self.centralwidget)
-        self.horizontalLayout_3.addWidget(self.button_reset_search)
         self.lineEdit_searchall = QtWidgets.QLineEdit(self.centralwidget)
         self.lineEdit_searchall.setObjectName("lineEdit_searchall")
         self.horizontalLayout_3.addWidget(self.lineEdit_searchall)
@@ -199,7 +196,6 @@ class Ui_MainWindow(object):
         #    else x
         # )
 
-        # self.button_reset_search.pressed.connect(lambda: self.clear_highlighted_background())
         self.lineEdit_searchnote.returnPressed.connect(lambda: self.search_in_note())
         self.lineEdit_searchnote.textChanged.connect(
             lambda x: self.clear_highlighted_background()
@@ -259,14 +255,37 @@ class Ui_MainWindow(object):
             self.checkbox_pin.setChecked(False)
             self.checkbox_pin.setText("🏱")
 
-    cancel_flag = True
-    def set_textedit_text(self, metadata, previous_obj=None, cancel_flag=False):
-        if cancel_flag:
+    cancel_flag = False
+    last_index_for_cancel = None
+    def set_textedit_text(self, metadata, previous_obj=None):
+        if self.cancel_flag:
+            print('Cancel flag is True, ending method')
             self.cancel_flag = False
             self.unsaved_changes = False
             return
 
+        print('Cancel flag is false')
+
         res_question = self.check_changes_before_leaving()
+        if res_question == 'Yes' and previous_obj is not None:
+            Ui_MainWindow.unsaved_changes = False
+            # self.MainWindow.setWindowTitle(self.app_title_str)
+            current_item_data = previous_obj.data(QtCore.Qt.UserRole)
+            id = current_item_data[0]
+            print(f'Saving note with id: {id}')
+            pin = 1 if self.checkbox_pin.isChecked() else 0
+            self.note_db.update_note(
+                id, self.lineEdit_title.text(), self.textEdit.toPlainText(), pin
+            )
+            self.add_data_listview(saved_flag=True)
+            for item_index in range(self.listWidget.count()):
+                item_data = self.listWidget.item(item_index).data(QtCore.Qt.UserRole)
+                id_current = item_data[0]
+                if id == id_current:
+                    self.listWidget.setCurrentRow(item_index)
+
+            return
+
         if res_question == 'cancel' and previous_obj is not None:
             previous_obj = previous_obj.data(QtCore.Qt.UserRole)
             current_id = previous_obj[0]
@@ -274,10 +293,13 @@ class Ui_MainWindow(object):
                 item_data = self.listWidget.item(item_index).data(QtCore.Qt.UserRole)
                 id = item_data[0]
                 if id == current_id:
+                    print('Changing current listwidget index')
+                    print('setting flag to true')
+                    self.cancel_flag = True
+                    self.last_index_for_cancel = item_index
                     self.listWidget.setCurrentRow(item_index)
+                    return
 
-            self.cancel_flag = True
-            return
 
         if previous_obj is not None:
             previous_obj = previous_obj.data(QtCore.Qt.UserRole)
@@ -294,12 +316,11 @@ class Ui_MainWindow(object):
         self.textEdit.setText(note[2])
         self.lineEdit_title.setText(note[1])
         self.refresh_pin_checkbox()
-        print("setting it to FASLE")
         Ui_MainWindow.unsaved_changes = False
         self.MainWindow.setWindowTitle(self.app_title_str)
 
+
     def combobox_changed(self, txt):
-        # print(txt)
         if txt == "New":
             self.note_db.add_note()
             self.add_data_listview()
@@ -317,6 +338,7 @@ class Ui_MainWindow(object):
             # self.MainWindow.setWindowTitle(self.app_title_str)
             current_item_data = self.listWidget.currentItem().data(QtCore.Qt.UserRole)
             id = current_item_data[0]
+            print(f'Saving note iwth id: {id}')
             pin = 1 if self.checkbox_pin.isChecked() else 0
             self.note_db.update_note(
                 id, self.lineEdit_title.text(), self.textEdit.toPlainText(), pin
@@ -367,7 +389,6 @@ class Ui_MainWindow(object):
     def clear_highlighted_background(self):
         search = self.lineEdit_searchnote.text()
         if len(search) <= 0:
-            print("resetting background oclor")
             cursor = self.textEdit.textCursor()
             format = QTextCharFormat()
             format.setBackground(QColor("white"))
@@ -381,9 +402,7 @@ class Ui_MainWindow(object):
             self.add_data_listview()
 
     def newOnkeyPressEvent(self, event: QKeyEvent):
-        print(f"{event.key()}")
         if event.modifiers() == Qt.ControlModifier and event.key() == Qt.Key_Tab:
-            print("Ctrl + Tab pressed")
             if self.textEdit.hasFocus():
                 self.listWidget.setFocus()
             elif self.lineEdit_title.hasFocus():
@@ -392,7 +411,6 @@ class Ui_MainWindow(object):
                 self.lineEdit_title.setFocus()
 
     def check_changes_before_leaving(self):
-        print("ITEM CLICKED")
         # print(f"Are there unsaved changes?? {Ui_MainWindow.unsaved_changes}")
         if Ui_MainWindow.unsaved_changes:
             msgBox = QtWidgets.QMessageBox()
@@ -400,8 +418,9 @@ class Ui_MainWindow(object):
             msgBox.setStandardButtons(QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel )
             return_value = msgBox.exec()
             if return_value == QMessageBox.Yes:
-                self.combobox_changed("Save")
+                #self.combobox_changed("Save")
                 self.MainWindow.setWindowTitle(Ui_MainWindow.app_title_str)
+                return 'Yes'
             elif return_value == QMessageBox.No:
                 self.MainWindow.setWindowTitle(Ui_MainWindow.app_title_str)
                 Ui_MainWindow.unsaved_changes = False
