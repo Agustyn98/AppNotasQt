@@ -15,7 +15,7 @@ from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtGui import QKeySequence
 from backend import NotesDB
 from PyQt5.QtGui import QKeyEvent
-from PyQt5.QtGui import QTextCursor, QColor, QTextDocument, QTextCharFormat, QBrush
+from PyQt5.QtGui import QTextCursor, QColor, QTextDocument, QTextCharFormat, QBrush, QPalette
 
 
 class Ui_MainWindow(object):
@@ -163,6 +163,7 @@ class Ui_MainWindow(object):
         self.lineEdit_searchall.returnPressed.connect(
             lambda: self.add_data_listview(search_all_flag=True)
         )
+        self.lineEdit_searchall.textChanged.connect(lambda : self.clear_searchall())
 
         self.listWidget.currentItemChanged.connect(
             lambda x: self.set_textedit_text(x.data(QtCore.Qt.UserRole))
@@ -170,8 +171,9 @@ class Ui_MainWindow(object):
             else x
         )
 
-        self.button_reset_search.pressed.connect(lambda: self.add_data_listview())
+        #self.button_reset_search.pressed.connect(lambda: self.clear_highlighted_background())
         self.lineEdit_searchnote.returnPressed.connect(lambda: self.search_in_note())
+        self.lineEdit_searchnote.textChanged.connect(lambda x: self.clear_highlighted_background())
 
         # self.listWidget.keyPressEvent = self.list_key_press_event
 
@@ -281,27 +283,15 @@ class Ui_MainWindow(object):
             self.MainWindow.setWindowTitle("* " + self.app_title_str + " *")
             Ui_MainWindow.unsaved_changes = True
         
-        
 
     def search_in_note(self):
         word = self.lineEdit_searchnote.text()
 
-        #cursor = self.textEdit.document().find(word)
-        #while cursor is not None and not cursor.isNull():
-        #    print(cursor)
-        #    # hightlight
-        #    cursor.select(QTextCursor.WordUnderCursor)
-        #    self.textEdit.setTextCursor(cursor)
-        #    self.textEdit.setTextBackgroundColor(QColor("yellow"))
-        #    # move to the next occurrence
-        #    cursor = self.textEdit.document().find(word, cursor)
-
-        # set the search pattern to find the substring "word"
-
         cursor = self.textEdit.textCursor()
         # Setup the desired format for matches
         format = QTextCharFormat()
-        format.setBackground(QBrush(QColor("red")))
+        #format.setBackground(QBrush(QColor("yellow")))
+        format.setBackground(QColor("yellow"))
         
         # Setup the regex engine
         re = QRegularExpression(word)
@@ -315,3 +305,20 @@ class Ui_MainWindow(object):
             cursor.setPosition(match.capturedStart(), QTextCursor.MoveAnchor)
             cursor.setPosition(match.capturedEnd(), QTextCursor.KeepAnchor)
             cursor.mergeCharFormat(format)
+
+    
+    def clear_highlighted_background(self):
+        search = self.lineEdit_searchnote.text()
+        if len(search) <= 0:
+            print('resetting background oclor')
+            cursor = self.textEdit.textCursor()
+            format = QTextCharFormat()
+            format.setBackground(QColor("white"))
+            cursor.setPosition(0, QTextCursor.MoveAnchor)
+            cursor.setPosition(len(self.textEdit.toPlainText()), QTextCursor.KeepAnchor)
+            cursor.mergeCharFormat(format)
+    
+    def clear_searchall(self):
+        search = self.lineEdit_searchall.text()
+        if len(search) <= 0:
+            self.add_data_listview()
