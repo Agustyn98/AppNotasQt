@@ -180,7 +180,7 @@ class Ui_MainWindow(object):
 
         self.textEdit.textChanged.connect(lambda: self.unsaved_changes_text())
         self.lineEdit_title.textChanged.connect(lambda: self.unsaved_changes_text(w='title'))
-        #self.checkbox_pin.stateChanged.connect(lambda: self.unsaved_changes_text(w='pin'))
+        self.checkbox_pin.stateChanged.connect(lambda: self.unsaved_changes_text(w='pin'))
 
         self.add_data_listview()
         self.listWidget.setFocus()
@@ -194,7 +194,17 @@ class Ui_MainWindow(object):
     def add_data_listview(self, saved_flag=False, search_all_flag=False):
         """Refresh listview"""
 
-        print(f'VALUE OF FLAG before {self.edittext_changed}')
+        print(f'in refresh listview, flag = {self.flag_pin_changed_from_widget_change}\n')
+        if self.flag_pin_changed_from_widget_change:
+            print('Not refreshing listwidget bc pin change comes from listwidget change')
+            self.flag_pin_changed_from_widget_change = False
+            self.edittext_changed = False
+            return
+
+        #self.flag_pin_changed_from_widget_change = False
+
+        print('REFRESHING LISTVIEW')
+
         if self.dont_update_list > 0:
             if self.edittext_changed:
                 print('Youre editing the QEditText, therefore not refreshing. \n')
@@ -203,7 +213,6 @@ class Ui_MainWindow(object):
 
         self.edittext_changed = False
         print('Refreshing listview')
-        print(f'VALUE OF FLAG after {self.edittext_changed}')
 
         if saved_flag:
             current_item_data = self.listWidget.currentItem().data(QtCore.Qt.UserRole)
@@ -237,9 +246,12 @@ class Ui_MainWindow(object):
         else:
             self.listWidget.setCurrentRow(0)
 
+    flag_pin_changed_from_widget_change = False
     def refresh_pin_checkbox(self):
         current_item_data = self.listWidget.currentItem().data(QtCore.Qt.UserRole)
         pin = current_item_data[1]
+        self.flag_pin_changed_from_widget_change = True
+        print(f'REFRESHING PINS, flag = {self.flag_pin_changed_from_widget_change}\n')
         if pin == 1:
             self.checkbox_pin.setChecked(True)
             self.checkbox_pin.setText("🏲")
@@ -254,6 +266,7 @@ class Ui_MainWindow(object):
 
     def set_textedit_text(self, metadata, previous_obj=None):
         """Current item in listWidget changed"""
+        #print('current item changed inlistwidget')
 
         id = metadata[0]
 
@@ -326,9 +339,16 @@ class Ui_MainWindow(object):
 
     edittext_changed = True
 
+
     def unsaved_changes_text(self, w='text'):
+        print(f'TRIGGERED! {w}')
         if w == 'text':
             self.edittext_changed = True
+        
+        #if w == 'pin':
+        #    print('in the function triggered by checkbox change ,flag pin changed from widget = False')
+        #    self.flag_pin_changed_from_widget_change = False
+        
         if self.changing_listwidgetitem_flag == 1:
             self.changing_listwidgetitem_flag += 1
             return
