@@ -78,7 +78,6 @@ class NotesDB:
             ''',
             (id,)
         )
-        self._query_pragma()
         return self.cursor.fetchone()
 
     def update_note(self, id, title, content, pinned):

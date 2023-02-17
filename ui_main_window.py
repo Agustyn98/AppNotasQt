@@ -161,6 +161,8 @@ class Ui_MainWindow(object):
             lambda x: self.clear_highlighted_background()
         )
 
+        self.lineEdit_title.textChanged.connect(lambda: self.combobox_changed('Save'))
+
         self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+S"), self)
         self.shortcut.activated.connect(lambda: self.combobox_changed(txt="Save"))
         self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+N"), self)
