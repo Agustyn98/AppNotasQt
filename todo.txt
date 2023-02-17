@@ -2,8 +2,9 @@ better colors for listwidget -!
 auto save when changing title -!
 continue saving when changing title -!
 lineedit background color -!
-auto save when changing pin: -
-    It saves the pin, but the listwidget is not always updated
+auto save when changing pin -!
+
+clean unused flags, see if I can replace flags with signal blocking
 edittext go to the end of text when selected
 fix menu size and items
 listwidget item selected correctly at start

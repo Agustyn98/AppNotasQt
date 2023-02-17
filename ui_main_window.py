@@ -194,14 +194,14 @@ class Ui_MainWindow(object):
     def add_data_listview(self, saved_flag=False, search_all_flag=False):
         """Refresh listview"""
 
-        print(f'in refresh listview, flag = {self.flag_pin_changed_from_widget_change}\n')
-        if self.flag_pin_changed_from_widget_change:
-            print('Not refreshing listwidget bc pin change comes from listwidget change')
-            self.flag_pin_changed_from_widget_change = False
-            self.edittext_changed = False
-            return
+        #print(f'in refresh listview, flag = {self.flag_pin_changed_from_widget_change}\n')
+        #if self.flag_pin_changed_from_widget_change:
+        #    print('Not refreshing listwidget bc pin change comes from listwidget change')
+        #    self.flag_pin_changed_from_widget_change = False
+        #    self.edittext_changed = False
+        #    return
 
-        #self.flag_pin_changed_from_widget_change = False
+        ##self.flag_pin_changed_from_widget_change = False
 
         print('REFRESHING LISTVIEW')
 
@@ -248,16 +248,20 @@ class Ui_MainWindow(object):
 
     flag_pin_changed_from_widget_change = False
     def refresh_pin_checkbox(self):
+        self.checkbox_pin.blockSignals(True)
         current_item_data = self.listWidget.currentItem().data(QtCore.Qt.UserRole)
         pin = current_item_data[1]
-        self.flag_pin_changed_from_widget_change = True
-        print(f'REFRESHING PINS, flag = {self.flag_pin_changed_from_widget_change}\n')
+        #self.flag_pin_changed_from_widget_change = True
+        #print(f'REFRESHING PINS, flag = {self.flag_pin_changed_from_widget_change}\n')
         if pin == 1:
             self.checkbox_pin.setChecked(True)
             self.checkbox_pin.setText("🏲")
         else:
             self.checkbox_pin.setChecked(False)
             self.checkbox_pin.setText("🏱")
+
+        self.checkbox_pin.blockSignals(False)
+    
 
     cancel_flag = False
     last_index_for_cancel = None
@@ -344,10 +348,6 @@ class Ui_MainWindow(object):
         print(f'TRIGGERED! {w}')
         if w == 'text':
             self.edittext_changed = True
-        
-        #if w == 'pin':
-        #    print('in the function triggered by checkbox change ,flag pin changed from widget = False')
-        #    self.flag_pin_changed_from_widget_change = False
         
         if self.changing_listwidgetitem_flag == 1:
             self.changing_listwidgetitem_flag += 1
