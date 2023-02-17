@@ -84,15 +84,15 @@ class Ui_MainWindow(object):
         self.verticalLayout.addLayout(self.horizontalLayout_3)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        # self.listWidget = QtWidgets.QListWidget(self.centralwidget)
-        # self.listWidget = self.MyListWidget(self.centralwidget)
-        # self.listWidget = self.create_list_widget()
+        # Qlistwidget
         self.listWidget = QtWidgets.QListWidget(self.centralwidget)
         self.listWidget.setAlternatingRowColors(True)
         self.listWidget.horizontalScrollBar().setVisible(False)
         self.listWidget.verticalScrollBar().setVisible(False)
+        #self.listWidget.setStyleSheet("QListWidget::item { border: 1px solid red }")
+        self.listWidget.setStyleSheet("QListWidget:focus { border: 1px solid #F166FF}")
         # self.listWidget.setWrapping(True)
-        # self.listWidget.setObjectName("listWidget")
+
         self.horizontalLayout.addWidget(self.listWidget)
         self.verticalLayout_3 = QtWidgets.QVBoxLayout()
         self.verticalLayout_3.setObjectName("verticalLayout_3")
@@ -161,7 +161,6 @@ class Ui_MainWindow(object):
             lambda x: self.clear_highlighted_background()
         )
 
-        self.lineEdit_title.textChanged.connect(lambda: self.combobox_changed('Save'))
 
         self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+S"), self)
         self.shortcut.activated.connect(lambda: self.combobox_changed(txt="Save"))
@@ -181,6 +180,7 @@ class Ui_MainWindow(object):
         self.shortcut.activated.connect(lambda: self.comboBox.showPopup())
 
         self.textEdit.textChanged.connect(lambda: self.unsaved_changes_text())
+        #self.lineEdit_title.textChanged.connect(lambda: self.unsaved_changes_text())
 
         self.listWidget.setFocus()
 
@@ -243,7 +243,6 @@ class Ui_MainWindow(object):
 
     def set_textedit_text(self, metadata, previous_obj=None):
         """Current item in listWidget changed"""
-        print('current item changes..')
 
         id = metadata[0]
 
@@ -253,9 +252,8 @@ class Ui_MainWindow(object):
 
         if previous_obj is not None:
             previous_obj = previous_obj.data(QtCore.Qt.UserRole)
-            print(f'previous obj is not none, its {previous_obj}, and current id is {id}')
+            #print(f'previous obj is not none, its {previous_obj}, and current id is {id}')
             if id != previous_obj[0]:
-                print('dont update list now')
                 self.dont_update_list = 0
         
         # This prevents the listwidget from changing items when the note is saved
@@ -263,6 +261,7 @@ class Ui_MainWindow(object):
             self.saved_flag = False
             return
 
+        print("Changing current item in listwidget..")
         self.changing_listwidgetitem_flag = True
 
         note = self.note_db.get_note_by_id(id)
@@ -317,6 +316,7 @@ class Ui_MainWindow(object):
 
     def unsaved_changes_text(self):
         if self.changing_listwidgetitem_flag:
+            print('Youre chanigng widgets, therefore not saving.')
             self.changing_listwidgetitem_flag = False
             return
 
@@ -329,7 +329,7 @@ class Ui_MainWindow(object):
         # Setup the desired format for matches
         format = QTextCharFormat()
         # format.setBackground(QBrush(QColor("yellow")))
-        format.setBackground(QColor("yellow"))
+        format.setBackground(QColor(160,80,160))
 
         # Setup the regex engine
         re = QRegularExpression(word)
@@ -351,7 +351,7 @@ class Ui_MainWindow(object):
         if len(search) <= 0:
             cursor = self.textEdit.textCursor()
             format = QTextCharFormat()
-            format.setBackground(QColor("white"))
+            format.setBackground(QColor(32,33,36))
             cursor.setPosition(0, QTextCursor.MoveAnchor)
             cursor.setPosition(len(self.textEdit.toPlainText()), QTextCursor.KeepAnchor)
             cursor.mergeCharFormat(format)
