@@ -4,7 +4,10 @@ import time
 class NotesDB:
     def __init__(self, db_file='notes.db'):
         self.conn = sqlite3.connect(db_file)
+        # Create a new, in-memory database
         self.cursor = self.conn.cursor()
+        self.cursor.execute('PRAGMA synchronous = OFF;')
+
         self.create_table()
 
     def create_table(self):

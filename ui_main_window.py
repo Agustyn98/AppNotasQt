@@ -283,7 +283,10 @@ class Ui_MainWindow(object):
     cancel_flag = False
     last_index_for_cancel = None
 
+    changing_listwidgetitem_flag = False
+
     def set_textedit_text(self, metadata, previous_obj=None):
+        self.changing_listwidgetitem_flag = True
         print(f'listwidget changed, with saved_flag = {self.saved_flag}')
         if self.cancel_flag:
             self.cancel_flag = False
@@ -393,9 +396,14 @@ class Ui_MainWindow(object):
     unsaved_changes = False
 
     def unsaved_changes_text(self):
-        if not Ui_MainWindow.unsaved_changes:
-            self.MainWindow.setWindowTitle("* " + self.app_title_str + " *")
-            Ui_MainWindow.unsaved_changes = True
+        if self.changing_listwidgetitem_flag:
+            self.changing_listwidgetitem_flag = False
+            return
+
+        self.combobox_changed('Save')
+        #if not Ui_MainWindow.unsaved_changes:
+        #    self.MainWindow.setWindowTitle("* " + self.app_title_str + " *")
+        #    Ui_MainWindow.unsaved_changes = True
 
     def search_in_note(self):
         word = self.lineEdit_searchnote.text()
