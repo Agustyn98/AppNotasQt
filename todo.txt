@@ -6,4 +6,5 @@ auto save when changing pin
 fix menu size and items
 listwidget item selected correctly at start
 information window
+search all has a bug when you press enter and it's empty
 lineedit background color !

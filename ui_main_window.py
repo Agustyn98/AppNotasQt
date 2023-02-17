@@ -180,6 +180,7 @@ class Ui_MainWindow(object):
 
         self.textEdit.textChanged.connect(lambda: self.unsaved_changes_text())
         self.lineEdit_title.textChanged.connect(lambda: self.unsaved_changes_text(w='title'))
+        #self.checkbox_pin.stateChanged.connect(lambda: self.unsaved_changes_text(w='pin'))
 
         self.add_data_listview()
         self.listWidget.setFocus()
@@ -193,15 +194,16 @@ class Ui_MainWindow(object):
     def add_data_listview(self, saved_flag=False, search_all_flag=False):
         """Refresh listview"""
 
-
+        print(f'VALUE OF FLAG before {self.edittext_changed}')
         if self.dont_update_list > 0:
             if self.edittext_changed:
-                #print('Youre editing the QEditText, therefore not refreshing. \n')
+                print('Youre editing the QEditText, therefore not refreshing. \n')
                 self.edittext_changed = False
                 return
 
         self.edittext_changed = False
-        #print('Refreshing listview')
+        print('Refreshing listview')
+        print(f'VALUE OF FLAG after {self.edittext_changed}')
 
         if saved_flag:
             current_item_data = self.listWidget.currentItem().data(QtCore.Qt.UserRole)
@@ -337,6 +339,13 @@ class Ui_MainWindow(object):
         #print('\nsaving...\n\n')
         self.combobox_changed("Save")
 
+    #def save_pin_in_note(self):
+    #    if self.changing_listwidgetitem_flag == 1:
+    #        self.changing_listwidgetitem_flag += 1
+    #        return
+    #    elif self.changing_listwidgetitem_flag >= 2:
+    #        self.changing_listwidgetitem_flag = 0
+
     def search_in_note(self):
         word = self.lineEdit_searchnote.text()
 
@@ -392,6 +401,7 @@ class Ui_MainWindow(object):
         new_window = MyDialog()
         new_window.setWindowTitle("New Window")
         new_window.exec_()
+
 
     def center_screen(self):
         qr = self.frameGeometry()
