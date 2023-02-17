@@ -140,7 +140,6 @@ class Ui_MainWindow(object):
 
         self.comboBox.currentTextChanged.connect(lambda x: self.combobox_changed(x))
 
-        self.add_data_listview()
 
         self.lineEdit_searchall.returnPressed.connect(
             lambda: self.add_data_listview(search_all_flag=True)
@@ -180,8 +179,9 @@ class Ui_MainWindow(object):
         self.shortcut.activated.connect(lambda: self.comboBox.showPopup())
 
         self.textEdit.textChanged.connect(lambda: self.unsaved_changes_text())
-        #self.lineEdit_title.textChanged.connect(lambda: self.unsaved_changes_text())
+        self.lineEdit_title.textChanged.connect(lambda: self.unsaved_changes_text(w='title'))
 
+        self.add_data_listview()
         self.listWidget.setFocus()
 
     note_db = NotesDB()
@@ -201,6 +201,7 @@ class Ui_MainWindow(object):
             self.saved_flag = True
 
         self.listWidget.clear()
+
         if search_all_flag:
             list_of_notes = self.note_db.search_notes(self.lineEdit_searchall.text())
         else:
@@ -216,7 +217,7 @@ class Ui_MainWindow(object):
             item_to_add.setData(QtCore.Qt.UserRole, (note[0], note[4]))
             self.listWidget.addItem(item_to_add)
 
-        print("listWidget updated")
+        #print("listWidget updated")
 
         if saved_flag:
             for item_index in range(self.listWidget.count()):
@@ -225,6 +226,8 @@ class Ui_MainWindow(object):
                 if id == current_id:
                     self.listWidget.setCurrentRow(item_index)
                     break
+        else:
+            self.listWidget.setCurrentRow(0)
 
     def refresh_pin_checkbox(self):
         current_item_data = self.listWidget.currentItem().data(QtCore.Qt.UserRole)
@@ -239,7 +242,7 @@ class Ui_MainWindow(object):
     cancel_flag = False
     last_index_for_cancel = None
 
-    changing_listwidgetitem_flag = False
+    changing_listwidgetitem_flag = 0
 
     def set_textedit_text(self, metadata, previous_obj=None):
         """Current item in listWidget changed"""
@@ -262,14 +265,13 @@ class Ui_MainWindow(object):
             return
 
         print("Changing current item in listwidget..")
-        self.changing_listwidgetitem_flag = True
+        self.changing_listwidgetitem_flag = 1
 
         note = self.note_db.get_note_by_id(id)
         self.textEdit.setText(note[2])
         self.lineEdit_title.setText(note[1])
         self.refresh_pin_checkbox()
         Ui_MainWindow.unsaved_changes = False
-        self.MainWindow.setWindowTitle(self.app_title_str)
 
     def combobox_changed(self, txt):
         if txt == "New":
@@ -314,12 +316,15 @@ class Ui_MainWindow(object):
 
     unsaved_changes = False
 
-    def unsaved_changes_text(self):
-        if self.changing_listwidgetitem_flag:
-            print('Youre chanigng widgets, therefore not saving.')
-            self.changing_listwidgetitem_flag = False
+    def unsaved_changes_text(self, w='text'):
+        if self.changing_listwidgetitem_flag == 1:
+            self.changing_listwidgetitem_flag += 1
+            return
+        elif self.changing_listwidgetitem_flag >= 2:
+            self.changing_listwidgetitem_flag = 0
             return
 
+        print('\nsaving...\n\n')
         self.combobox_changed("Save")
 
     def search_in_note(self):

@@ -1,5 +1,7 @@
-better colors for listwidget
-auto save when changing title
+better colors for listwidget !
+auto save when changing title !
+continue saving when changing title
 auto save when changing pin
 fix menu size and items
-lineedit background color
+listwidget item selected correctly at start
+lineedit background color !
