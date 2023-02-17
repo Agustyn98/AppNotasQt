@@ -189,11 +189,19 @@ class Ui_MainWindow(object):
     saved_flag = False
 
     dont_update_list = 0
+
     def add_data_listview(self, saved_flag=False, search_all_flag=False):
-        # Refresh listview
-        print(f'current dont_update count: {self.dont_update_list}')
+        """Refresh listview"""
+
+
         if self.dont_update_list > 0:
-            return
+            if self.edittext_changed:
+                #print('Youre editing the QEditText, therefore not refreshing. \n')
+                self.edittext_changed = False
+                return
+
+        self.edittext_changed = False
+        #print('Refreshing listview')
 
         if saved_flag:
             current_item_data = self.listWidget.currentItem().data(QtCore.Qt.UserRole)
@@ -216,8 +224,6 @@ class Ui_MainWindow(object):
             item_to_add.setText(note[1])
             item_to_add.setData(QtCore.Qt.UserRole, (note[0], note[4]))
             self.listWidget.addItem(item_to_add)
-
-        #print("listWidget updated")
 
         if saved_flag:
             for item_index in range(self.listWidget.count()):
@@ -316,7 +322,11 @@ class Ui_MainWindow(object):
 
     unsaved_changes = False
 
+    edittext_changed = True
+
     def unsaved_changes_text(self, w='text'):
+        if w == 'text':
+            self.edittext_changed = True
         if self.changing_listwidgetitem_flag == 1:
             self.changing_listwidgetitem_flag += 1
             return
@@ -324,7 +334,7 @@ class Ui_MainWindow(object):
             self.changing_listwidgetitem_flag = 0
             return
 
-        print('\nsaving...\n\n')
+        #print('\nsaving...\n\n')
         self.combobox_changed("Save")
 
     def search_in_note(self):
