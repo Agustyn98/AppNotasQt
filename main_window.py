@@ -16,7 +16,7 @@ if __name__ == '__main__':
     if False:
         qdarktheme.setup_theme()
     else:
-        app.setStyle('Windows')
+        app.setStyle('Fusion')
 
     window = MainWindow()
     window.show()

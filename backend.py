@@ -6,9 +6,32 @@ class NotesDB:
         self.conn = sqlite3.connect(db_file)
         # Create a new, in-memory database
         self.cursor = self.conn.cursor()
+
         self.cursor.execute('PRAGMA synchronous = OFF;')
+        self.conn.execute('PRAGMA temp_store = 2;')
+        self.conn.execute("PRAGMA journal_mode = OFF")
+        self.conn.execute("PRAGMA cache_size = 50000")
+        self.conn.commit()
+
 
         self.create_table()
+
+    def _query_pragma(self):
+        cursor = self.conn.execute("PRAGMA cache_size")
+        cache_size = cursor.fetchone()[0]
+        print(f"Current cache size is {cache_size} pages")
+
+        cursor = self.conn.execute("PRAGMA temp_store")
+        temp_store = cursor.fetchone()[0]
+        print(f"Current temp_store is {temp_store}")
+
+        cursor = self.conn.execute("PRAGMA journal_mode")
+        journal_mode = cursor.fetchone()[0]
+        print(f"Current journal mode is {journal_mode}")
+
+        cursor = self.conn.execute("PRAGMA synchronous")
+        synchronous_mode = cursor.fetchone()[0]
+        print(f"Current synchronous mode is {synchronous_mode}")
 
     def create_table(self):
         self.cursor.execute(
@@ -55,6 +78,7 @@ class NotesDB:
             ''',
             (id,)
         )
+        self._query_pragma()
         return self.cursor.fetchone()
 
     def update_note(self, id, title, content, pinned):
@@ -106,6 +130,10 @@ if __name__ == '__main__':
     # add a new note
     db.add_note('Test note', 'This is a test note', 1)
     db.add_note('Test note 2', '2', 0)
+    l = db.get_list_of_notes()
+    print(l)
+    print('Now querying info...')
+    db._query_pragma()
     quit()
     # retrieve a list of all notes
     list_of_notes = db.get_list_of_notes()

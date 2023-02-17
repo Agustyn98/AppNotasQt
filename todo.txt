@@ -1,1 +1,3 @@
-Better colors for QListWidget
+better colors for listwidget
+auto save when changing title
+auto save when changing pin

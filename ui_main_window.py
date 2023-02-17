@@ -22,66 +22,29 @@ from PyQt5.QtGui import (
     QTextCharFormat,
     QBrush,
     QPalette,
+    QIcon,
 )
-from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QDialog, QDesktopWidget
+from PyQt5.QtWidgets import (
+    QApplication,
+    QMainWindow,
+    QPushButton,
+    QDialog,
+    QDesktopWidget,
+)
 import os
 
 
 class Ui_MainWindow(object):
-    class MyListWidget(QtWidgets.QListWidget):
-        def __init__(self, outer_instance):
-            super(Ui_MainWindow.MyListWidget, self).__init__()
-            self.outer_instance = outer_instance
-
-        def keyPressEvent(self, event: QKeyEvent) -> None:
-            if (
-                event.key() == QtCore.Qt.Key.Key_Up
-                or event.key() == QtCore.Qt.Key.Key_Down
-            ):
-                check = self.check_changes_before_leaving()
-                if check == "cancel":
-                    return
-                super().keyPressEvent(event)
-
-            elif event.modifiers() == Qt.ControlModifier and event.key() == Qt.Key_Tab:
-                self.outer_instance.lineEdit_title.setFocus()
-
-        def check_changes_before_leaving(self):
-            if Ui_MainWindow.unsaved_changes:
-                msgBox = QtWidgets.QMessageBox()
-                msgBox.setText("Save changes?")
-                msgBox.setStandardButtons(
-                    QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel
-                )
-                return_value = msgBox.exec()
-                if return_value == QMessageBox.Yes:
-                    self.outer_instance.combobox_changed("Save")
-                    self.outer_instance.MainWindow.setWindowTitle(
-                        Ui_MainWindow.app_title_str
-                    )
-                    Ui_MainWindow.unsaved_changes = False
-                    pass
-                elif return_value == QMessageBox.No:
-                    self.outer_instance.MainWindow.setWindowTitle(
-                        Ui_MainWindow.app_title_str
-                    )
-                    Ui_MainWindow.unsaved_changes = False
-                else:
-                    return "cancel"
-
-    def create_list_widget(self):
-        return Ui_MainWindow.MyListWidget(self)
-
     app_title_str = "AppNotas"
 
     def setupUi(self, MainWindow):
         self.MainWindow = MainWindow
         self.MainWindow.keyPressEvent = self.newOnkeyPressEvent
-        #font = QtGui.QFont()
-        #font.setPointSize(14)
-        #MainWindow.setFont(font)
+        # font = QtGui.QFont()
+        # font.setPointSize(14)
+        # MainWindow.setFont(font)
         self.read_config()
-        #self.MainWindow.resize(800, 600)
+        # self.MainWindow.resize(800, 600)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.centralwidget)
@@ -123,11 +86,12 @@ class Ui_MainWindow(object):
         self.horizontalLayout.setObjectName("horizontalLayout")
         # self.listWidget = QtWidgets.QListWidget(self.centralwidget)
         # self.listWidget = self.MyListWidget(self.centralwidget)
-        self.listWidget = self.create_list_widget()
+        # self.listWidget = self.create_list_widget()
+        self.listWidget = QtWidgets.QListWidget(self.centralwidget)
         self.listWidget.setAlternatingRowColors(True)
         self.listWidget.horizontalScrollBar().setVisible(False)
         self.listWidget.verticalScrollBar().setVisible(False)
-        #self.listWidget.setWrapping(True)
+        # self.listWidget.setWrapping(True)
         # self.listWidget.setObjectName("listWidget")
         self.horizontalLayout.addWidget(self.listWidget)
         self.verticalLayout_3 = QtWidgets.QVBoxLayout()
@@ -192,24 +156,10 @@ class Ui_MainWindow(object):
             else x
         )
 
-        # self.listWidget.currentItemChanged.connect(
-        #    lambda x, previous: self.set_textedit_text(x.data(QtCore.Qt.UserRole), previous_obj=previous.data(QtCore.Qt.UserRole))
-        #    if x is not None
-        #    else x
-        # )
-
-        # self.listWidget.currentRowChanged.connect(
-        #    lambda x: self.set_textedit_text()
-        #    if x is not None
-        #    else x
-        # )
-
         self.lineEdit_searchnote.returnPressed.connect(lambda: self.search_in_note())
         self.lineEdit_searchnote.textChanged.connect(
             lambda x: self.clear_highlighted_background()
         )
-
-        # self.listWidget.keyPressEvent = self.list_key_press_event
 
         self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+S"), self)
         self.shortcut.activated.connect(lambda: self.combobox_changed(txt="Save"))
@@ -222,7 +172,9 @@ class Ui_MainWindow(object):
         self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+G"), self)
         self.shortcut.activated.connect(lambda: self.lineEdit_searchall.setFocus())
         self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+P"), self)
-        self.shortcut.activated.connect(lambda: self.checkbox_pin.setCheckState(not self.checkbox_pin.checkState()))
+        self.shortcut.activated.connect(
+            lambda: self.checkbox_pin.setCheckState(not self.checkbox_pin.checkState())
+        )
         self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+M"), self)
         self.shortcut.activated.connect(lambda: self.comboBox.showPopup())
 
@@ -232,14 +184,19 @@ class Ui_MainWindow(object):
 
     note_db = NotesDB()
 
-    saved_flag = 0
+    saved_flag = False
 
+    dont_update_list = 0
     def add_data_listview(self, saved_flag=False, search_all_flag=False):
         # Refresh listview
+        print(f'current dont_update count: {self.dont_update_list}')
+        if self.dont_update_list > 0:
+            return
+
         if saved_flag:
             current_item_data = self.listWidget.currentItem().data(QtCore.Qt.UserRole)
             current_id = current_item_data[0]
-            self.saved_flag += 1
+            self.saved_flag = True
 
         self.listWidget.clear()
         if search_all_flag:
@@ -247,27 +204,24 @@ class Ui_MainWindow(object):
         else:
             list_of_notes = self.note_db.get_list_of_notes()
 
-
         for note in list_of_notes:
             item_to_add = QtWidgets.QListWidgetItem()
             if note[4] == 1:
-                item_to_add.setBackground(QColor(0, 128, 0))
+                icon = QIcon("pin.png")
+                #item_to_add.setBackground(QColor(0, 128, 0))
+                item_to_add.setIcon(icon)
             item_to_add.setText(note[1])
             item_to_add.setData(QtCore.Qt.UserRole, (note[0], note[4]))
             self.listWidget.addItem(item_to_add)
 
+        print("listWidget updated")
+
         if saved_flag:
-            #print(f'selecting note {current_id}')
             for item_index in range(self.listWidget.count()):
                 item_data = self.listWidget.item(item_index).data(QtCore.Qt.UserRole)
-                print(f'for item with data{item_data} we have the index {item_index}')
                 id = item_data[0]
                 if id == current_id:
-                    print(f'saved_flag value 1: {self.saved_flag}')
-                    print(f'setting the index {item_index}')
                     self.listWidget.setCurrentRow(item_index)
-                    print(self.lineEdit_title.text())
-                    print(f'saved_flag value 2: {self.saved_flag}')
                     break
 
     def refresh_pin_checkbox(self):
@@ -286,61 +240,29 @@ class Ui_MainWindow(object):
     changing_listwidgetitem_flag = False
 
     def set_textedit_text(self, metadata, previous_obj=None):
-        self.changing_listwidgetitem_flag = True
-        print(f'listwidget changed, with saved_flag = {self.saved_flag}')
-        if self.cancel_flag:
-            self.cancel_flag = False
-            self.unsaved_changes = False
-            return
+        """Current item in listWidget changed"""
+        print('current item changes..')
 
-        if self.saved_flag == 1: 
-            self.saved_flag = 2
-            return
-        elif self.saved_flag >= 2:
-            self.saved_flag = 0
-            return
+        id = metadata[0]
 
-
-        print(f'ListWidget item changed triggered, becasue saved_flag = {self.saved_flag}')
-
-        res_question = self.check_changes_before_leaving()
-        if res_question == "Yes" and previous_obj is not None:
-            Ui_MainWindow.unsaved_changes = False
-            # self.MainWindow.setWindowTitle(self.app_title_str)
-            current_item_data = previous_obj.data(QtCore.Qt.UserRole)
-            id = current_item_data[0]
-            pin = 1 if self.checkbox_pin.isChecked() else 0
-            self.note_db.update_note(
-                id, self.lineEdit_title.text(), self.textEdit.toPlainText(), pin
-            )
-            self.add_data_listview(saved_flag=True)
-            for item_index in range(self.listWidget.count()):
-                item_data = self.listWidget.item(item_index).data(QtCore.Qt.UserRole)
-                id_current = item_data[0]
-                if id == id_current:
-                    print('Changing the row in listwiget')
-                    self.listWidget.setCurrentRow(item_index)
-
-            return
-
-        if res_question == "cancel" and previous_obj is not None:
-            previous_obj = previous_obj.data(QtCore.Qt.UserRole)
-            current_id = previous_obj[0]
-            for item_index in range(self.listWidget.count()):
-                item_data = self.listWidget.item(item_index).data(QtCore.Qt.UserRole)
-                id = item_data[0]
-                if id == current_id:
-                    self.cancel_flag = True
-                    self.last_index_for_cancel = item_index
-                    print('Changing the row in listwidget at line 318')
-                    self.listWidget.setCurrentRow(item_index)
-                    return
+        #if previous_obj is None:
+        #    print('DONT UPDATE LIST NOW, setting updoot to 0')
+        #    self.dont_update_list = 0
 
         if previous_obj is not None:
             previous_obj = previous_obj.data(QtCore.Qt.UserRole)
+            print(f'previous obj is not none, its {previous_obj}, and current id is {id}')
+            if id != previous_obj[0]:
+                print('dont update list now')
+                self.dont_update_list = 0
+        
+        # This prevents the listwidget from changing items when the note is saved
+        if self.saved_flag:
+            self.saved_flag = False
+            return
 
+        self.changing_listwidgetitem_flag = True
 
-        id = metadata[0]
         note = self.note_db.get_note_by_id(id)
         self.textEdit.setText(note[2])
         self.lineEdit_title.setText(note[1])
@@ -362,15 +284,14 @@ class Ui_MainWindow(object):
 
         if txt == "Save":
             Ui_MainWindow.unsaved_changes = False
-            # self.MainWindow.setWindowTitle(self.app_title_str)
             current_item_data = self.listWidget.currentItem().data(QtCore.Qt.UserRole)
             id = current_item_data[0]
-            print(f'Saving note with id: {id}')
             pin = 1 if self.checkbox_pin.isChecked() else 0
             self.note_db.update_note(
                 id, self.lineEdit_title.text(), self.textEdit.toPlainText(), pin
             )
             self.add_data_listview(saved_flag=True)
+            self.dont_update_list += 1
 
         if txt == "Delete":
             # self.note_db.delete_note()
@@ -379,15 +300,12 @@ class Ui_MainWindow(object):
                 id = data[0]
                 msgBox = QtWidgets.QMessageBox()
                 msgBox.setText("Delete " + self.lineEdit_title.text()[:20] + ".. ?")
-                msgBox.setStandardButtons(
-                    QMessageBox.Yes | QMessageBox.No
-                )
+                msgBox.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
                 return_value = msgBox.exec()
                 if return_value == QMessageBox.Yes:
                     self.note_db.delete_note(id)
                     self.add_data_listview()
 
-        
         if txt == "Settings":
             self.open_setting_dialog()
 
@@ -400,10 +318,7 @@ class Ui_MainWindow(object):
             self.changing_listwidgetitem_flag = False
             return
 
-        self.combobox_changed('Save')
-        #if not Ui_MainWindow.unsaved_changes:
-        #    self.MainWindow.setWindowTitle("* " + self.app_title_str + " *")
-        #    Ui_MainWindow.unsaved_changes = True
+        self.combobox_changed("Save")
 
     def search_in_note(self):
         word = self.lineEdit_searchnote.text()
@@ -455,58 +370,34 @@ class Ui_MainWindow(object):
             else:
                 self.listWidget.setFocus()
 
-    def check_changes_before_leaving(self):
-        if Ui_MainWindow.unsaved_changes:
-            msgBox = QtWidgets.QMessageBox()
-            msgBox.setText("Save changes?")
-            msgBox.setStandardButtons(
-                QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel
-            )
-            return_value = msgBox.exec()
-            if return_value == QMessageBox.Yes:
-                # self.combobox_changed("Save")
-                self.MainWindow.setWindowTitle(Ui_MainWindow.app_title_str)
-                return "Yes"
-            elif return_value == QMessageBox.No:
-                self.MainWindow.setWindowTitle(Ui_MainWindow.app_title_str)
-                Ui_MainWindow.unsaved_changes = False
-            else:
-                return "cancel"
-
     def open_setting_dialog(self):
+        return
         new_window = MyDialog()
         new_window.setWindowTitle("New Window")
         new_window.exec_()
 
-
     def center_screen(self):
-        screen = QDesktopWidget().screenGeometry()
-
         qr = self.frameGeometry()
         cp = QDesktopWidget().availableGeometry().center()
         qr.moveCenter(cp)
         self.move(qr.topLeft())
 
-    
     def read_config(self):
-        with open('config') as f:
+        with open("config") as f:
             for line in f:
-                blocks = line.split(':')
+                blocks = line.split(":")
                 config = blocks[0]
                 value = blocks[1]
                 value = value.strip()
 
-                if config == 'font_size':
+                if config == "font_size":
+                    print('SETTING FONT?')
                     font = QtGui.QFont()
                     font.setPointSize(int(value))
                     self.MainWindow.setFont(font)
-                elif config == 'window_size':
-                    last_sizes = value.split('x')
+                elif config == "window_size":
+                    last_sizes = value.split("x")
                     self.MainWindow.resize(int(last_sizes[0]), int(last_sizes[1]))
-                elif config == 'window_center':
-                    if value == 'true':
+                elif config == "window_center":
+                    if value == "true":
                         self.center_screen()
-
-
-
-
