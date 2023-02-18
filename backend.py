@@ -13,8 +13,8 @@ class NotesDB:
         self.conn.execute("PRAGMA cache_size = 50000")
         self.conn.commit()
 
-
         self.create_table()
+
 
     def _query_pragma(self):
         cursor = self.conn.execute("PRAGMA cache_size")
@@ -40,8 +40,8 @@ class NotesDB:
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 title TEXT,
                 content TEXT,
-                created TEXT,
-                last_modified TEXT,
+                created INTEGER,
+                last_modified INTEGER,
                 pinned INTEGER
             );
             '''

@@ -1,14 +1,32 @@
+DONE:
 better colors for listwidget -!
 auto save when changing title -!
 continue saving when changing title -!
 lineedit background color -!
 auto save when changing pin -!
+clean imports -!
+listwidget item selected correctly at start -!
+clean unused flags, see if I can replace flags with signal blocking -!
+search all has a bug when you press enter and it's empty -!
+edittext go to the end of text when selected -!
+searching in note saves the note for each match -!
 
-clean unused flags, see if I can replace flags with signal blocking
-edittext go to the end of text when selected
-fix menu size and items
-listwidget item selected correctly at start
+PROGRESS:
 information window
-search all has a bug when you press enter and it's empty
+
+BLOCKED:
+
+TODO:
+    VISUAL:
+        fix menu size and items
+        color of widgets when hovered over
+        at the top in the middle, but a logo or text with the name of the app
+        info dialog look better (ask chatgpt)
+    OPERATIONAL:
+
+FUTURE:
 rich text in edittext
-color of widgets when hovered over
+pinning or unpinning shouldn't update the last mod timestamp
+ctrl z redos to much
+make sure config exists before opening it
+encrypt db
