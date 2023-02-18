@@ -10,19 +10,21 @@ clean unused flags, see if I can replace flags with signal blocking -!
 search all has a bug when you press enter and it's empty -!
 edittext go to the end of text when selected -!
 searching in note saves the note for each match -!
+information window -!
 
 PROGRESS:
-information window
 
 BLOCKED:
+fix menu size and items
+    can't get the menu combobox to be smaller
+
 
 TODO:
     VISUAL:
-        fix menu size and items
         color of widgets when hovered over
-        at the top in the middle, but a logo or text with the name of the app
         info dialog look better (ask chatgpt)
     OPERATIONAL:
+        synchronise in cloud
 
 FUTURE:
 rich text in edittext

@@ -1,4 +1,2 @@
 pyqt5 
 pyqtdarktheme
-#qdarkstyle
-#qt-material

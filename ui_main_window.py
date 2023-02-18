@@ -1,4 +1,5 @@
 import datetime
+
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import QRegularExpression, Qt
 from PyQt5.QtGui import (
@@ -8,7 +9,6 @@ from PyQt5.QtGui import (
     QKeySequence,
     QTextCharFormat,
     QTextCursor,
-    QPixmap,
 )
 from PyQt5.QtWidgets import QDesktopWidget, QDialog, QMessageBox
 
@@ -47,19 +47,19 @@ class Ui_MainWindow(object):
         self.comboBox.addItem("")
         self.horizontalLayout_3.addWidget(self.comboBox)
         # Title label
-        #self.main_label = QLabel(self.centralwidget)
-        #self.main_label.setText("<html><font color='Magenta'>AppNotas</font></html>")
-        #self.main_label.setStyleSheet("border: 1px solid white;")
-        #self.main_label.setTextFormat(Qt.RichText)
-        #self.main_label.setAlignment(Qt.AlignCenter)
-        #self.horizontalLayout_3.addWidget(self.main_label)
+        # self.main_label = QLabel(self.centralwidget)
+        # self.main_label.setText("<html><font color='Magenta'>AppNotas</font></html>")
+        # self.main_label.setStyleSheet("border: 1px solid white;")
+        # self.main_label.setTextFormat(Qt.RichText)
+        # self.main_label.setAlignment(Qt.AlignCenter)
+        # self.horizontalLayout_3.addWidget(self.main_label)
         # Search lineEdits
-        self.lineEdit_searchall = QtWidgets.QLineEdit(self.centralwidget)
-        self.lineEdit_searchall.setObjectName("lineEdit_searchall")
-        self.horizontalLayout_3.addWidget(self.lineEdit_searchall)
         self.lineEdit_searchnote = QtWidgets.QLineEdit(self.centralwidget)
         self.lineEdit_searchnote.setObjectName("lineEdit_searchnote")
         self.horizontalLayout_3.addWidget(self.lineEdit_searchnote)
+        self.lineEdit_searchall = QtWidgets.QLineEdit(self.centralwidget)
+        self.lineEdit_searchall.setObjectName("lineEdit_searchall")
+        self.horizontalLayout_3.addWidget(self.lineEdit_searchall)
         # Buttons
         self.checkbox_pin = QtWidgets.QCheckBox("🏱", self.centralwidget)
         self.checkbox_pin.setTristate(False)
@@ -90,7 +90,9 @@ class Ui_MainWindow(object):
         self.lineEdit_title.setFont(font)
         self.lineEdit_title.setObjectName("lineEdit_title")
         self.verticalLayout_3.addWidget(self.lineEdit_title)
+        # QTextEdit
         self.textEdit = QtWidgets.QTextEdit(self.centralwidget)
+        self.textEdit.setStyleSheet("QTextEdit { padding: 6px; }")
         self.textEdit.setObjectName("textEdit")
         self.verticalLayout_3.addWidget(self.textEdit)
         self.verticalLayout_3.setStretch(0, 1)
@@ -183,12 +185,12 @@ class Ui_MainWindow(object):
 
         if self.dont_update_list > 0:
             if self.edittext_changed:
-                print("Youre editing the QEditText, therefore not refreshing. \n")
+                #print("Youre editing the QEditText, therefore not refreshing. \n")
                 self.edittext_changed = False
                 return
 
         self.edittext_changed = False
-        print("Refreshing listview")
+        #print("Refreshing listview")
 
         if saved_flag:
             current_item_data = self.listWidget.currentItem().data(QtCore.Qt.UserRole)
@@ -202,10 +204,10 @@ class Ui_MainWindow(object):
         else:
             list_of_notes = self.note_db.get_list_of_notes()
 
+        icon = QIcon("pin.png")
         for note in list_of_notes:
             item_to_add = QtWidgets.QListWidgetItem()
             if note[4] == 1:
-                icon = QIcon("pin.png")
                 item_to_add.setIcon(icon)
             item_to_add.setText(note[1])
             item_to_add.setData(QtCore.Qt.UserRole, (note[0], note[4]))
@@ -267,17 +269,6 @@ class Ui_MainWindow(object):
         self.refresh_pin_checkbox()
 
     def combobox_changed(self, txt):
-        if txt == "New":
-            self.note_db.add_note()
-            self.add_data_listview()
-            for item_index in range(self.listWidget.count()):
-                item_data = self.listWidget.item(item_index).data(QtCore.Qt.UserRole)
-                pin = item_data[1]
-                if pin == 0:
-                    self.listWidget.setCurrentRow(item_index)
-                    self.lineEdit_title.setFocus()
-                    break
-
         if txt == "Save":
             current_item_data = self.listWidget.currentItem().data(QtCore.Qt.UserRole)
             id = current_item_data[0]
@@ -288,7 +279,18 @@ class Ui_MainWindow(object):
             self.add_data_listview(saved_flag=True)
             self.dont_update_list = 1
 
-        if txt == "Delete":
+        elif txt == "New":
+            self.note_db.add_note()
+            self.add_data_listview()
+            for item_index in range(self.listWidget.count()):
+                item_data = self.listWidget.item(item_index).data(QtCore.Qt.UserRole)
+                pin = item_data[1]
+                if pin == 0:
+                    self.listWidget.setCurrentRow(item_index)
+                    self.lineEdit_title.setFocus()
+                    break
+
+        elif txt == "Delete":
             # self.note_db.delete_note()
             if self.listWidget.currentItem() is not None:
                 data = self.listWidget.currentItem().data(QtCore.Qt.UserRole)
@@ -301,10 +303,10 @@ class Ui_MainWindow(object):
                     self.note_db.delete_note(id)
                     self.add_data_listview()
 
-        if txt == "Info":
+        elif txt == "Info":
             self.open_info_dialog()
-        
-        if txt == "Help":
+
+        elif txt == "Help":
             self.open_help_dialog()
 
         self.comboBox.setCurrentIndex(0)
@@ -372,11 +374,8 @@ class Ui_MainWindow(object):
                 self.listWidget.setFocus()
             elif self.lineEdit_title.hasFocus():
                 self.textEdit.setFocus()
-                # get a QTextCursor object to manipulate the text cursor
                 cursor = self.textEdit.textCursor()
-                # move the cursor to the end of the text
                 cursor.movePosition(QtGui.QTextCursor.End)
-                # set the text cursor to the updated cursor position
                 self.textEdit.setTextCursor(cursor)
 
             elif self.listWidget.hasFocus():
@@ -393,10 +392,14 @@ class Ui_MainWindow(object):
             self.current_note_last_mod
         ).strftime("%Y-%m-%d %H:%M:%S")
 
-        new_window = MyDialog(self.current_note_id, current_note_created_formatted, current_note_last_mod_formatted, num_of_chars)
+        new_window = MyDialog(
+            self.current_note_id,
+            current_note_created_formatted,
+            current_note_last_mod_formatted,
+            num_of_chars,
+        )
         new_window.exec_()
 
-    
     def open_help_dialog(self):
         new_window = ShortcutsDialog()
         new_window.exec_()
@@ -416,7 +419,6 @@ class Ui_MainWindow(object):
                 value = value.strip()
 
                 if config == "font_size":
-                    print("SETTING FONT?")
                     font = QtGui.QFont()
                     font.setPointSize(int(value))
                     self.MainWindow.setFont(font)
@@ -428,7 +430,7 @@ class Ui_MainWindow(object):
                         self.center_screen()
 
 
-from PyQt5.QtWidgets import QDialog, QVBoxLayout, QLabel
+from PyQt5.QtWidgets import QDialog, QLabel, QVBoxLayout
 
 
 class MyDialog(QDialog):
@@ -449,19 +451,21 @@ class MyDialog(QDialog):
 class ShortcutsDialog(QDialog):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle('Shortcuts')
+        self.setWindowTitle("Shortcuts")
         layout = QVBoxLayout()
-        text = '<h2>Shortcuts:</h2>' \
-               '<ul>' \
-               '<li><b>Ctrl TAB</b> -> Cycle through main widgets</li>' \
-               '<li><b>Ctrl F</b> -> Search all</li>' \
-               '<li><b>Ctrl G</b> -> Search note</li>' \
-               '<li><b>Ctrl S</b> -> Manually save</li>' \
-               '<li><b>Ctrl N</b> -> New Note</li>' \
-               '<li><b>Ctrl D</b> -> Delete Note</li>' \
-               '<li><b>Ctrl P</b> -> Pin Note</li>' \
-               '<li><b>Ctrl M</b> -> Open Menu</li>' \
-               '</ul>'
+        text = (
+            "<h2>Shortcuts:</h2>"
+            "<ul>"
+            "<li><b>Ctrl TAB</b> -> Cycle through main widgets</li>"
+            "<li><b>Ctrl F</b> -> Search all</li>"
+            "<li><b>Ctrl G</b> -> Search note</li>"
+            "<li><b>Ctrl S</b> -> Manually save</li>"
+            "<li><b>Ctrl N</b> -> New Note</li>"
+            "<li><b>Ctrl D</b> -> Delete Note</li>"
+            "<li><b>Ctrl P</b> -> Pin Note</li>"
+            "<li><b>Ctrl M</b> -> Open Menu</li>"
+            "</ul>"
+        )
         label = QLabel(text)
         layout.addWidget(label)
         self.setLayout(layout)
