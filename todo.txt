@@ -26,7 +26,7 @@ TODO:
         set the icon
         info dialog look better (ask chatgpt)
     OPERATIONAL:
-        BUG things not getting saved on the first type >:(
+        BUG on dev branch, things not getting saved on the first type >:(
         font sizes
             Make a separate config line for textbox default size, and buttons to change it
             I probably need to save the last font size when the app is closed
