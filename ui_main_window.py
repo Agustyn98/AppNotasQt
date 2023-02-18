@@ -12,10 +12,20 @@ from PyQt5.QtGui import (
     QTextCursor,
     QFont,
 )
-from PyQt5.QtWidgets import QDesktopWidget, QDialog, QMessageBox
+from PyQt5.QtWidgets import QDesktopWidget, QDialog, QMessageBox, QLineEdit
 
 from backend import NotesDB
 
+
+class MyLineEdit(QLineEdit):
+    def __init__(self, parent=None, main_window_instance=None):
+        super().__init__(parent)
+        self.main_window = main_window_instance
+
+    def focusOutEvent(self, event):
+        if self.main_window is not None:
+            self.main_window.clear_highlighted_background(unfocused_flag=True)
+        super().focusOutEvent(event)
 
 class Ui_MainWindow(object):
     app_title_str = "AppNotas"
@@ -55,10 +65,13 @@ class Ui_MainWindow(object):
         # self.main_label.setTextFormat(Qt.RichText)
         # self.main_label.setAlignment(Qt.AlignCenter)
         # self.horizontalLayout_3.addWidget(self.main_label)
-        # Search lineEdits
-        self.lineEdit_searchnote = QtWidgets.QLineEdit(self.centralwidget)
+
+        # Search note lineEdits
+        #self.lineEdit_searchnote = QtWidgets.QLineEdit(self.centralwidget)
+        self.lineEdit_searchnote = MyLineEdit(self.centralwidget, self)
         self.lineEdit_searchnote.setObjectName("lineEdit_searchnote")
         self.horizontalLayout_3.addWidget(self.lineEdit_searchnote)
+        # Search all lineEdit
         self.lineEdit_searchall = QtWidgets.QLineEdit(self.centralwidget)
         self.lineEdit_searchall.setObjectName("lineEdit_searchall")
         self.horizontalLayout_3.addWidget(self.lineEdit_searchall)
@@ -195,12 +208,12 @@ class Ui_MainWindow(object):
 
         if self.dont_update_list > 0:
             if self.edittext_changed:
-                #print("Youre editing the QEditText, therefore not refreshing. \n")
+                print("Youre editing the QEditText, therefore not refreshing. \n")
                 self.edittext_changed = False
                 return
 
         self.edittext_changed = False
-        #print("Refreshing listview")
+        print("Refreshing listview\n")
 
         if saved_flag:
             current_item_data = self.listWidget.currentItem().data(QtCore.Qt.UserRole)
@@ -286,6 +299,7 @@ class Ui_MainWindow(object):
             self.note_db.update_note(
                 id, self.lineEdit_title.text(), self.textEdit.toHtml(), pin
             )
+            print('saved!')
             self.add_data_listview(saved_flag=True)
             self.dont_update_list = 1
 
@@ -363,9 +377,11 @@ class Ui_MainWindow(object):
 
         self.textEdit.blockSignals(False)
 
-    def clear_highlighted_background(self):
+    def clear_highlighted_background(self, unfocused_flag=False):
         search = self.lineEdit_searchnote.text()
-        if len(search) <= 0:
+        if len(search) <= 0 or unfocused_flag:
+            # IF YOU EXPERIENCE ISSUES UPDATING/SAVING, REMOVE THIS
+            self.changing_listwidgetitem_flag = 2 
             cursor = self.textEdit.textCursor()
             format = QTextCharFormat()
             format.setBackground(QColor(32, 33, 36))

@@ -14,6 +14,8 @@ information window -!
 new note text -!
 
 --PROGRESS:
+Add new font size combobox in ui, make it change the selected text size
+Also add a color combobox, for bold, underline and italic just use shortcuts
 
 
 BLOCKED:
@@ -26,11 +28,15 @@ TODO:
         set the icon
         info dialog look better (ask chatgpt)
     OPERATIONAL:
-        BUG on dev branch, things not getting saved on the first type >:(
+        BUG on dev branch, things not getting saved on the first type >:( -?
         font sizes
-            Make a separate config line for textbox default size, and buttons to change it
+            Make a separate config line for textbox default size, and buttons to change it -!
             I probably need to save the last font size when the app is closed
+        
+        Do something about search note background getting saved, I can't clear it every time I save
+            Now removing the background saves the note, when it shouldn't
         synchronise in cloud
+        
 
 FUTURE:
 rich text in edittext
