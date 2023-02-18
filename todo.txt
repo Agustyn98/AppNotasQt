@@ -14,8 +14,6 @@ information window -!
 new note text -!
 
 --PROGRESS:
-package for windows and linux
-    make relative path of db for each os, probably in .local/share for linux
 
 
 BLOCKED:
@@ -28,7 +26,6 @@ TODO:
         set the icon
         info dialog look better (ask chatgpt)
     OPERATIONAL:
-        reset config button in help, indicate where the config is
         synchronise in cloud
 
 FUTURE:

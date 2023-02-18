@@ -8,9 +8,10 @@ import getpass
 class NotesDB:
     def __init__(self):
         db_name = 'notes.db'
-        dir_path = NotesDB.app_dir
+        dir_path = NotesDB.get_dir_path()
         db_path = os.path.join(dir_path, db_name)
         self.create_config()
+        print(f'connecting to database at: {db_path}')
         self.conn = sqlite3.connect(db_path)
         # Create a new, in-memory database
         self.cursor = self.conn.cursor()
