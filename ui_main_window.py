@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import datetime
 
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -411,7 +412,8 @@ class Ui_MainWindow(object):
         self.move(qr.topLeft())
 
     def read_config(self):
-        with open("config") as f:
+        config_path = NotesDB.config_path
+        with open(config_path) as f:
             for line in f:
                 blocks = line.split(":")
                 config = blocks[0]
@@ -464,6 +466,8 @@ class ShortcutsDialog(QDialog):
             "<li><b>Ctrl D</b> -> Delete Note</li>"
             "<li><b>Ctrl P</b> -> Pin Note</li>"
             "<li><b>Ctrl M</b> -> Open Menu</li>"
+            f"<h4>Configuration: {NotesDB.app_dir}</h4>"
+            f"<p style='text-align: center;'>Delete the config file to reset it</p>"
             "</ul>"
         )
         label = QLabel(text)

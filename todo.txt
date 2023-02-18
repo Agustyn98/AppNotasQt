@@ -11,8 +11,12 @@ search all has a bug when you press enter and it's empty -!
 edittext go to the end of text when selected -!
 searching in note saves the note for each match -!
 information window -!
+new note text -!
 
-PROGRESS:
+--PROGRESS:
+package for windows and linux
+    make relative path of db for each os, probably in .local/share for linux
+
 
 BLOCKED:
 fix menu size and items
@@ -21,15 +25,15 @@ fix menu size and items
 
 TODO:
     VISUAL:
-        color of widgets when hovered over
+        set the icon
         info dialog look better (ask chatgpt)
     OPERATIONAL:
+        reset config button in help, indicate where the config is
         synchronise in cloud
-        package for windows and linux
 
 FUTURE:
 rich text in edittext
 pinning or unpinning shouldn't update the last mod timestamp
 ctrl z redos to much
-make sure config exists before opening it
 encrypt db
+color of widgets when hovered over

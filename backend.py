@@ -1,9 +1,17 @@
 import sqlite3
 import time
+import os
+import platform
+import getpass
+
 
 class NotesDB:
-    def __init__(self, db_file='notes.db'):
-        self.conn = sqlite3.connect(db_file)
+    def __init__(self):
+        db_name = 'notes.db'
+        dir_path = NotesDB.app_dir
+        db_path = os.path.join(dir_path, db_name)
+        self.create_config()
+        self.conn = sqlite3.connect(db_path)
         # Create a new, in-memory database
         self.cursor = self.conn.cursor()
 
@@ -15,6 +23,39 @@ class NotesDB:
 
         self.create_table()
 
+    app_dir = ''
+    @staticmethod
+    def get_dir_path() -> str:
+        app_dir_name = 'appnotas'
+        home = os.path.expanduser("~")
+        current_os = platform.system()
+
+        if current_os == 'Windows':
+            NotesDB.app_dir = os.path.join(home, 'AppData', 'Local', app_dir_name)
+        elif current_os == 'Darwin':
+            username = getpass.getuser()
+            NotesDB.app_dir = os.path.join(home, "Library", "Application Support", app_dir_name)
+        else:
+            username = getpass.getuser()
+            NotesDB.app_dir = os.path.join(home, f'.{app_dir_name}')
+
+        if not os.path.exists(NotesDB.app_dir):
+            os.makedirs(NotesDB.app_dir)
+
+        return NotesDB.app_dir
+    
+
+    config_path = ''
+    @staticmethod
+    def create_config():
+        config_filename = 'config'
+        NotesDB.config_path = os.path.join(NotesDB.app_dir, config_filename)
+        if not os.path.exists(NotesDB.config_path):
+            with open(NotesDB.config_path, 'w') as f:
+                f.write('font_size:17\nwindow_size:900x700\nwindow_center:true\n')
+
+        #print(f' CREATED CONFIG AT {self.config_path}')
+        return NotesDB.config_path
 
     def _query_pragma(self):
         cursor = self.conn.execute("PRAGMA cache_size")
@@ -48,7 +89,7 @@ class NotesDB:
         )
         self.conn.commit()
 
-    def add_note(self, title='-', content='-', pinned=0):
+    def add_note(self, title='New Note', content='', pinned=0):
         current_timestamp = int(time.time())
         self.cursor.execute(
             '''
@@ -126,6 +167,8 @@ class NotesDB:
 if __name__ == '__main__':
     db = NotesDB('notes.db')
 
+    db.get_dir_path()
+    quit()
     # add a new note
     db.add_note('Test note', 'This is a test note', 1)
     db.add_note('Test note 2', '2', 0)
@@ -133,7 +176,6 @@ if __name__ == '__main__':
     print(l)
     print('Now querying info...')
     db._query_pragma()
-    quit()
     # retrieve a list of all notes
     list_of_notes = db.get_list_of_notes()
     print('List of notes:', list_of_notes)

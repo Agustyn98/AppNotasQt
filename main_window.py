@@ -1,7 +1,10 @@
+# -*- coding: utf-8 -*-
+
 import sys
 from PyQt5.QtGui import QFont
 from PyQt5 import QtWidgets
 import qdarktheme
+from backend import NotesDB
 
 
 # Import the converted .ui file
@@ -15,18 +18,20 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
 
 def read_font_size() -> int:
-    with open("config") as f:
+
+    NotesDB.get_dir_path()
+    config = NotesDB.create_config()
+    with open(config) as f:
         for line in f:
             blocks = line.split(":")
             config = blocks[0]
             value = blocks[1]
             value = value.strip()
             if config == "font_size":
-                print("SETTING FONT?")
                 if value.isnumeric():
                     return int(value)
 
-                return 13
+                return 16
 
 
 def main():
