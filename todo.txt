@@ -25,6 +25,7 @@ TODO:
         info dialog look better (ask chatgpt)
     OPERATIONAL:
         synchronise in cloud
+        package for windows and linux
 
 FUTURE:
 rich text in edittext
