@@ -381,7 +381,7 @@ class Ui_MainWindow(object):
         search = self.lineEdit_searchnote.text()
         if len(search) <= 0 or unfocused_flag:
             # IF YOU EXPERIENCE ISSUES UPDATING/SAVING, REMOVE THIS
-            self.changing_listwidgetitem_flag = 2 
+            self.changing_listwidgetitem_flag = 2
             cursor = self.textEdit.textCursor()
             format = QTextCharFormat()
             format.setBackground(QColor(32, 33, 36))

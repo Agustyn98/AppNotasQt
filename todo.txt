@@ -34,7 +34,7 @@ TODO:
             I probably need to save the last font size when the app is closed
         
         Do something about search note background getting saved, I can't clear it every time I save
-            Now removing the background saves the note, when it shouldn't
+            Now removing the background saves the note, when it shouldn't FIXED WITH
         synchronise in cloud
         
 
