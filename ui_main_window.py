@@ -10,11 +10,22 @@ from PyQt5.QtGui import (
     QKeySequence,
     QTextCharFormat,
     QTextCursor,
+    QFont,
 )
-from PyQt5.QtWidgets import QDesktopWidget, QDialog, QMessageBox
+from PyQt5.QtWidgets import QDesktopWidget, QDialog, QMessageBox, QLineEdit
 
 from backend import NotesDB
 
+
+class MyLineEdit(QLineEdit):
+    def __init__(self, parent=None, main_window_instance=None):
+        super().__init__(parent)
+        self.main_window = main_window_instance
+
+    def focusOutEvent(self, event):
+        if self.main_window is not None:
+            self.main_window.clear_highlighted_background(unfocused_flag=True)
+        super().focusOutEvent(event)
 
 class Ui_MainWindow(object):
     app_title_str = "AppNotas"
@@ -54,10 +65,13 @@ class Ui_MainWindow(object):
         # self.main_label.setTextFormat(Qt.RichText)
         # self.main_label.setAlignment(Qt.AlignCenter)
         # self.horizontalLayout_3.addWidget(self.main_label)
-        # Search lineEdits
-        self.lineEdit_searchnote = QtWidgets.QLineEdit(self.centralwidget)
+
+        # Search note lineEdits
+        #self.lineEdit_searchnote = QtWidgets.QLineEdit(self.centralwidget)
+        self.lineEdit_searchnote = MyLineEdit(self.centralwidget, self)
         self.lineEdit_searchnote.setObjectName("lineEdit_searchnote")
         self.horizontalLayout_3.addWidget(self.lineEdit_searchnote)
+        # Search all lineEdit
         self.lineEdit_searchall = QtWidgets.QLineEdit(self.centralwidget)
         self.lineEdit_searchall.setObjectName("lineEdit_searchall")
         self.horizontalLayout_3.addWidget(self.lineEdit_searchall)
@@ -93,6 +107,12 @@ class Ui_MainWindow(object):
         self.verticalLayout_3.addWidget(self.lineEdit_title)
         # QTextEdit
         self.textEdit = QtWidgets.QTextEdit(self.centralwidget)
+        font = QtGui.QFont()
+        if self._textedit_font is not None:
+            font.setPointSize(self._textedit_font)
+        else:
+            font.setPointSize(16)
+        self.textEdit.setFont(font)
         self.textEdit.setStyleSheet("QTextEdit { padding: 6px; }")
         self.textEdit.setObjectName("textEdit")
         self.verticalLayout_3.addWidget(self.textEdit)
@@ -147,6 +167,8 @@ class Ui_MainWindow(object):
             lambda x: self.clear_highlighted_background()
         )
 
+        self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+B"), self)
+        self.shortcut.activated.connect(lambda: self.make_selection_bold())
         self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+S"), self)
         self.shortcut.activated.connect(lambda: self.combobox_changed(txt="Save"))
         self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+N"), self)
@@ -186,12 +208,12 @@ class Ui_MainWindow(object):
 
         if self.dont_update_list > 0:
             if self.edittext_changed:
-                #print("Youre editing the QEditText, therefore not refreshing. \n")
+                print("Youre editing the QEditText, therefore not refreshing. \n")
                 self.edittext_changed = False
                 return
 
         self.edittext_changed = False
-        #print("Refreshing listview")
+        print("Refreshing listview\n")
 
         if saved_flag:
             current_item_data = self.listWidget.currentItem().data(QtCore.Qt.UserRole)
@@ -275,8 +297,9 @@ class Ui_MainWindow(object):
             id = current_item_data[0]
             pin = 1 if self.checkbox_pin.isChecked() else 0
             self.note_db.update_note(
-                id, self.lineEdit_title.text(), self.textEdit.toPlainText(), pin
+                id, self.lineEdit_title.text(), self.textEdit.toHtml(), pin
             )
+            print('saved!')
             self.add_data_listview(saved_flag=True)
             self.dont_update_list = 1
 
@@ -354,9 +377,11 @@ class Ui_MainWindow(object):
 
         self.textEdit.blockSignals(False)
 
-    def clear_highlighted_background(self):
+    def clear_highlighted_background(self, unfocused_flag=False):
         search = self.lineEdit_searchnote.text()
-        if len(search) <= 0:
+        if len(search) <= 0 or unfocused_flag:
+            # IF YOU EXPERIENCE ISSUES UPDATING/SAVING, REMOVE THIS
+            self.changing_listwidgetitem_flag = 2
             cursor = self.textEdit.textCursor()
             format = QTextCharFormat()
             format.setBackground(QColor(32, 33, 36))
@@ -404,6 +429,17 @@ class Ui_MainWindow(object):
     def open_help_dialog(self):
         new_window = ShortcutsDialog()
         new_window.exec_()
+    
+    def make_selection_bold(self):
+        print('CHANGING FORMAT')
+        cursor = self.textEdit.textCursor()
+        self.textEdit.selectAll()
+        self.textEdit.setFontPointSize(11)
+        self.textEdit.setTextCursor(cursor)
+        #curent_font_weight = self.textEdit.fontWeight()
+        #print(curent_font_weight)
+        #self.textEdit.setFontWeight(5)
+
 
     def center_screen(self):
         qr = self.frameGeometry()
@@ -411,6 +447,7 @@ class Ui_MainWindow(object):
         qr.moveCenter(cp)
         self.move(qr.topLeft())
 
+    _textedit_font = None
     def read_config(self):
         config_path = NotesDB.config_path
         with open(config_path) as f:
@@ -420,10 +457,8 @@ class Ui_MainWindow(object):
                 value = blocks[1]
                 value = value.strip()
 
-                if config == "font_size":
-                    font = QtGui.QFont()
-                    font.setPointSize(int(value))
-                    self.MainWindow.setFont(font)
+                if config == "textbox_font_size":
+                    self._textedit_font = int(value)
                 elif config == "window_size":
                     last_sizes = value.split("x")
                     self.MainWindow.resize(int(last_sizes[0]), int(last_sizes[1]))
