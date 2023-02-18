@@ -10,6 +10,7 @@ from PyQt5.QtGui import (
     QKeySequence,
     QTextCharFormat,
     QTextCursor,
+    QFont,
 )
 from PyQt5.QtWidgets import QDesktopWidget, QDialog, QMessageBox
 
@@ -93,6 +94,12 @@ class Ui_MainWindow(object):
         self.verticalLayout_3.addWidget(self.lineEdit_title)
         # QTextEdit
         self.textEdit = QtWidgets.QTextEdit(self.centralwidget)
+        font = QtGui.QFont()
+        if self._textedit_font is not None:
+            font.setPointSize(self._textedit_font)
+        else:
+            font.setPointSize(16)
+        self.textEdit.setFont(font)
         self.textEdit.setStyleSheet("QTextEdit { padding: 6px; }")
         self.textEdit.setObjectName("textEdit")
         self.verticalLayout_3.addWidget(self.textEdit)
@@ -147,6 +154,8 @@ class Ui_MainWindow(object):
             lambda x: self.clear_highlighted_background()
         )
 
+        self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+B"), self)
+        self.shortcut.activated.connect(lambda: self.make_selection_bold())
         self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+S"), self)
         self.shortcut.activated.connect(lambda: self.combobox_changed(txt="Save"))
         self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+N"), self)
@@ -275,7 +284,7 @@ class Ui_MainWindow(object):
             id = current_item_data[0]
             pin = 1 if self.checkbox_pin.isChecked() else 0
             self.note_db.update_note(
-                id, self.lineEdit_title.text(), self.textEdit.toPlainText(), pin
+                id, self.lineEdit_title.text(), self.textEdit.toHtml(), pin
             )
             self.add_data_listview(saved_flag=True)
             self.dont_update_list = 1
@@ -404,6 +413,17 @@ class Ui_MainWindow(object):
     def open_help_dialog(self):
         new_window = ShortcutsDialog()
         new_window.exec_()
+    
+    def make_selection_bold(self):
+        print('CHANGING FORMAT')
+        cursor = self.textEdit.textCursor()
+        self.textEdit.selectAll()
+        self.textEdit.setFontPointSize(11)
+        self.textEdit.setTextCursor(cursor)
+        #curent_font_weight = self.textEdit.fontWeight()
+        #print(curent_font_weight)
+        #self.textEdit.setFontWeight(5)
+
 
     def center_screen(self):
         qr = self.frameGeometry()
@@ -411,6 +431,7 @@ class Ui_MainWindow(object):
         qr.moveCenter(cp)
         self.move(qr.topLeft())
 
+    _textedit_font = None
     def read_config(self):
         config_path = NotesDB.config_path
         with open(config_path) as f:
@@ -420,10 +441,8 @@ class Ui_MainWindow(object):
                 value = blocks[1]
                 value = value.strip()
 
-                if config == "font_size":
-                    font = QtGui.QFont()
-                    font.setPointSize(int(value))
-                    self.MainWindow.setFont(font)
+                if config == "textbox_font_size":
+                    self._textedit_font = int(value)
                 elif config == "window_size":
                     last_sizes = value.split("x")
                     self.MainWindow.resize(int(last_sizes[0]), int(last_sizes[1]))
