@@ -1,17 +1,5 @@
 DONE:
-better colors for listwidget -!
-auto save when changing title -!
-continue saving when changing title -!
-lineedit background color -!
-auto save when changing pin -!
-clean imports -!
-listwidget item selected correctly at start -!
-clean unused flags, see if I can replace flags with signal blocking -!
-search all has a bug when you press enter and it's empty -!
-edittext go to the end of text when selected -!
-searching in note saves the note for each match -!
-information window -!
-new note text -!
+
 
 --PROGRESS:
 Add new font size combobox in ui, make it change the selected text size
@@ -29,18 +17,14 @@ TODO:
         info dialog look better (ask chatgpt)
     OPERATIONAL:
         BUG on dev branch, things not getting saved on the first type >:( -?
-        font sizes
-            Make a separate config line for textbox default size, and buttons to change it -!
-            I probably need to save the last font size when the app is closed
+            it happens when you switch from a note to another one that has the exact same title
         
-        Do something about search note background getting saved, I can't clear it every time I save
-            Now removing the background saves the note, when it shouldn't FIXED WITH
         synchronise in cloud
+        pinning or unpinning shouldn't update the last mod timestamp
+            You don't need to update the pin on textchanged event
         
 
 FUTURE:
-rich text in edittext
-pinning or unpinning shouldn't update the last mod timestamp
-ctrl z redos to much
 encrypt db
+ctrl z redos to much
 color of widgets when hovered over

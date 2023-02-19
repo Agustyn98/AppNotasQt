@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import datetime
+import time
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import QRegularExpression, Qt
@@ -26,6 +27,7 @@ class MyLineEdit(QLineEdit):
         if self.main_window is not None:
             self.main_window.clear_highlighted_background(unfocused_flag=True)
         super().focusOutEvent(event)
+
 
 class Ui_MainWindow(object):
     app_title_str = "AppNotas"
@@ -67,7 +69,7 @@ class Ui_MainWindow(object):
         # self.horizontalLayout_3.addWidget(self.main_label)
 
         # Search note lineEdits
-        #self.lineEdit_searchnote = QtWidgets.QLineEdit(self.centralwidget)
+        # self.lineEdit_searchnote = QtWidgets.QLineEdit(self.centralwidget)
         self.lineEdit_searchnote = MyLineEdit(self.centralwidget, self)
         self.lineEdit_searchnote.setObjectName("lineEdit_searchnote")
         self.horizontalLayout_3.addWidget(self.lineEdit_searchnote)
@@ -75,14 +77,27 @@ class Ui_MainWindow(object):
         self.lineEdit_searchall = QtWidgets.QLineEdit(self.centralwidget)
         self.lineEdit_searchall.setObjectName("lineEdit_searchall")
         self.horizontalLayout_3.addWidget(self.lineEdit_searchall)
+        # ComboBox Font Size
+        self.comboBox_fontsize = QtWidgets.QComboBox(self.centralwidget)
+        # self.comboBox_fontsize.setMaximumWidth(150)
+        self.comboBox_fontsize.addItem("Font Size")
+        self.comboBox_fontsize.addItems([str(x) for x in range(10, 28, 2)])
+        self.horizontalLayout_3.addWidget(self.comboBox_fontsize)
+        # ComboBox Font Color
+        # self.comboBox_fontcolor = QtWidgets.QComboBox(self.centralwidget)
+        # self.comboBox_fontcolor.setMaximumWidth(120)
+        # self.horizontalLayout_3.addWidget(self.comboBox_fontcolor)
         # Buttons
         self.checkbox_pin = QtWidgets.QCheckBox("🏱", self.centralwidget)
         self.checkbox_pin.setTristate(False)
         self.checkbox_pin.setObjectName("checkbox_pin")
         self.horizontalLayout_3.addWidget(self.checkbox_pin)
-        self.horizontalLayout_3.setStretch(0, 3)
-        self.horizontalLayout_3.setStretch(1, 3)
-        self.horizontalLayout_3.setStretch(2, 3)
+        self.horizontalLayout_3.setStretch(0, 40)
+        self.horizontalLayout_3.setStretch(1, 58)
+        self.horizontalLayout_3.setStretch(2, 58)
+        self.horizontalLayout_3.setStretch(3, 10)
+        self.horizontalLayout_3.setStretch(4, 10)
+        self.horizontalLayout_3.setStretch(5, 10)
         self.verticalLayout.addLayout(self.horizontalLayout_3)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
@@ -99,9 +114,10 @@ class Ui_MainWindow(object):
         self.verticalLayout_3 = QtWidgets.QVBoxLayout()
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.lineEdit_title = QtWidgets.QLineEdit(self.centralwidget)
+        self.lineEdit_title.setStyleSheet("QLineEdit#lineEdit_title{color:MediumOrchid}")
         font = QtGui.QFont()
         font.setBold(True)
-        font.setWeight(75)
+        font.setWeight(80)
         self.lineEdit_title.setFont(font)
         self.lineEdit_title.setObjectName("lineEdit_title")
         self.verticalLayout_3.addWidget(self.lineEdit_title)
@@ -111,7 +127,7 @@ class Ui_MainWindow(object):
         if self._textedit_font is not None:
             font.setPointSize(self._textedit_font)
         else:
-            font.setPointSize(16)
+            font.setPointSize(18)
         self.textEdit.setFont(font)
         self.textEdit.setStyleSheet("QTextEdit { padding: 6px; }")
         self.textEdit.setObjectName("textEdit")
@@ -185,6 +201,8 @@ class Ui_MainWindow(object):
         )
         self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+M"), self)
         self.shortcut.activated.connect(lambda: self.comboBox.showPopup())
+        self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+Shift+F"), self)
+        self.shortcut.activated.connect(lambda: self.comboBox_fontsize.showPopup())
 
         self.textEdit.textChanged.connect(lambda: self.unsaved_changes_text())
         self.lineEdit_title.textChanged.connect(
@@ -192,6 +210,9 @@ class Ui_MainWindow(object):
         )
         self.checkbox_pin.stateChanged.connect(
             lambda: self.unsaved_changes_text(w="pin")
+        )
+        self.comboBox_fontsize.currentTextChanged.connect(
+            lambda x: self.change_selection_font_size(x)
         )
 
         self.add_data_listview()
@@ -271,7 +292,7 @@ class Ui_MainWindow(object):
 
         if previous_obj is not None:
             previous_obj = previous_obj.data(QtCore.Qt.UserRole)
-            # print(f'previous obj is not none, its {previous_obj}, and current id is {id}')
+            #print(f'previous obj is not none, its {previous_obj}, and current id is {id}')
             if id != previous_obj[0]:
                 self.dont_update_list = 0
 
@@ -280,11 +301,14 @@ class Ui_MainWindow(object):
             self.saved_flag = False
             return
 
-        # print("Changing current item in listwidget..")
+        print("Changing current item in listwidget..")
         self.changing_listwidgetitem_flag = 1
 
         note = self.note_db.get_note_by_id(id)
         self.textEdit.setText(note[2])
+        self.lineEdit_title.blockSignals(True)
+        self.lineEdit_title.clear()
+        self.lineEdit_title.blockSignals(False)
         self.lineEdit_title.setText(note[1])
         self.current_note_created = note[3]
         self.current_note_last_mod = note[4]
@@ -293,13 +317,14 @@ class Ui_MainWindow(object):
 
     def combobox_changed(self, txt):
         if txt == "Save":
+            current_timestamp = int(time.time())
             current_item_data = self.listWidget.currentItem().data(QtCore.Qt.UserRole)
             id = current_item_data[0]
             pin = 1 if self.checkbox_pin.isChecked() else 0
             self.note_db.update_note(
                 id, self.lineEdit_title.text(), self.textEdit.toHtml(), pin
             )
-            print('saved!')
+            print("saved!")
             self.add_data_listview(saved_flag=True)
             self.dont_update_list = 1
 
@@ -338,6 +363,7 @@ class Ui_MainWindow(object):
     edittext_changed = True
 
     def unsaved_changes_text(self, w="text"):
+        print(f'text changed, chinging_listwidgetitem_flag: {self.changing_listwidgetitem_flag}')
         if w == "text":
             self.edittext_changed = True
 
@@ -429,17 +455,21 @@ class Ui_MainWindow(object):
     def open_help_dialog(self):
         new_window = ShortcutsDialog()
         new_window.exec_()
-    
-    def make_selection_bold(self):
-        print('CHANGING FORMAT')
-        cursor = self.textEdit.textCursor()
-        self.textEdit.selectAll()
-        self.textEdit.setFontPointSize(11)
-        self.textEdit.setTextCursor(cursor)
-        #curent_font_weight = self.textEdit.fontWeight()
-        #print(curent_font_weight)
-        #self.textEdit.setFontWeight(5)
 
+    def make_selection_bold(self):
+        normal_weight = 50
+        bold_weight = 80
+        current_font_weight = self.textEdit.fontWeight()
+        if current_font_weight <= normal_weight:
+            self.textEdit.setFontWeight(bold_weight)
+        else:
+            self.textEdit.setFontWeight(normal_weight)
+
+    def change_selection_font_size(self, selected_size=17):
+        self.textEdit.setFontPointSize(int(selected_size))
+        self.comboBox_fontsize.blockSignals(True)
+        self.comboBox_fontsize.setCurrentIndex(0)
+        self.comboBox_fontsize.blockSignals(False)
 
     def center_screen(self):
         qr = self.frameGeometry()
@@ -448,6 +478,7 @@ class Ui_MainWindow(object):
         self.move(qr.topLeft())
 
     _textedit_font = None
+
     def read_config(self):
         config_path = NotesDB.config_path
         with open(config_path) as f:
