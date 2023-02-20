@@ -27,7 +27,7 @@ def read_font_size() -> int:
             config = blocks[0]
             value = blocks[1]
             value = value.strip()
-            if config == "ui_font_size":
+            if config == "font_size":
                 if value.isnumeric():
                     return int(value)
 

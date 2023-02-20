@@ -416,7 +416,11 @@ class Ui_MainWindow(object):
         format.setBackground(QColor(120, 120, 120))
 
         # Setup the regex engine
-        re = QRegularExpression(word)
+        if self._case_sensitive_search:
+            re = QRegularExpression(word)
+        else:
+            re = QRegularExpression(word, QRegularExpression.CaseInsensitiveOption)
+
         i = re.globalMatch(
             self.textEdit.toPlainText()
         )  # QRegularExpressionMatchIterator
@@ -549,7 +553,7 @@ class Ui_MainWindow(object):
         self.move(qr.topLeft())
 
     _textedit_font = None
-
+    _case_sensitive_search = False
     def read_config(self):
         config_path = NotesDB.config_path
         with open(config_path) as f:
@@ -559,7 +563,7 @@ class Ui_MainWindow(object):
                 value = blocks[1]
                 value = value.strip()
 
-                if config == "ui_font_size":
+                if config == "font_size":
                     self._textedit_font = int(value)
                 elif config == "window_size":
                     last_sizes = value.split("x")
@@ -567,6 +571,10 @@ class Ui_MainWindow(object):
                 elif config == "window_center":
                     if value == "true":
                         self.center_screen()
+                elif config == "case_sensitive_search":
+                    self._case_sensitive_search = True if value == "true" else False
+                    
+
 
 
 from PyQt5.QtWidgets import QDialog, QLabel, QVBoxLayout
