@@ -236,12 +236,12 @@ class Ui_MainWindow(object):
 
         if self.dont_update_list > 0:
             if self.edittext_changed:
-                #print("Youre editing the QEditText, therefore not refreshing. \n")
+                print("Youre editing the QEditText, therefore not refreshing. \n")
                 self.edittext_changed = False
                 return
 
         self.edittext_changed = False
-        #print("Refreshing listview\n")
+        print("Refreshing listview\n")
 
         if saved_flag:
             current_item_data = self.listWidget.currentItem().data(QtCore.Qt.UserRole)
@@ -413,7 +413,7 @@ class Ui_MainWindow(object):
         cursor = self.textEdit.textCursor()
         # Setup the desired format for matches
         format = QTextCharFormat()
-        format.setBackground(QColor(160, 80, 160))
+        format.setBackground(QColor(120, 120, 120))
 
         # Setup the regex engine
         re = QRegularExpression(word)

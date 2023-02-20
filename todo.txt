@@ -12,7 +12,7 @@ TODO:
     VISUAL:
         set the icon for windows
     OPERATIONAL:
-        Try using Markdown instead of html
+        Search case insensitive/sensitive
         synchronise in cloud
 
 BUGS:
