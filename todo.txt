@@ -1,17 +1,12 @@
 DONE:
-pinning or unpinning shouldn't update the last mod timestamp
-    You don't need to update the pin on textchanged event
 
 
 --PROGRESS:
-Add new font size combobox in ui, make it change the selected text size
-Also add a color combobox, for bold, underline and italic just use shortcuts
 
 
 BLOCKED:
 fix menu size and items
     can't get the menu combobox to be smaller
-
 
 TODO:
     VISUAL:
@@ -19,9 +14,14 @@ TODO:
         info dialog look better (ask chatgpt)
     OPERATIONAL:
         synchronise in cloud
+
+BUGS:
+    search note, when removing highlight saves the note
+        I can't reproduce it
         
 
 FUTURE:
-encrypt db
-ctrl z redos to much
 color of widgets when hovered over
+encrypt db
+colors in the text font
+ctrl z undos too much

@@ -128,15 +128,28 @@ class NotesDB:
         return self.cursor.fetchone()
 
 
-    def update_note(self, id, title, content):
+    def update_note(self, id, content):
+        #current_timestamp = int(time.time())
+        self.cursor.execute(
+            """
+            UPDATE notes
+            SET content=?, last_modified=STRFTIME('%s')
+            WHERE id=?;
+            """,
+            (content, id),
+        )
+        self.conn.commit()
+    
+
+    def update_note_title(self, id, title):
         current_timestamp = int(time.time())
         self.cursor.execute(
             """
             UPDATE notes
-            SET title=?, content=?, last_modified=?
+            SET title=?, last_modified=?
             WHERE id=?;
             """,
-            (title, content, current_timestamp, id),
+            (title, current_timestamp, id),
         )
         self.conn.commit()
     
@@ -176,7 +189,8 @@ class NotesDB:
             """
             SELECT id, title, created, last_modified, pinned
             FROM notes
-            WHERE title LIKE ? OR content LIKE ?;
+            WHERE title LIKE ? OR content LIKE ?
+            ORDER BY pinned DESC, last_modified DESC;
             """,
             ("%" + word + "%", "%" + word + "%"),
         )

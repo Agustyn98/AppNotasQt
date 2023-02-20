@@ -319,13 +319,10 @@ class Ui_MainWindow(object):
 
     def combobox_changed(self, txt):
         if txt == "Save":
-            current_item_data = self.listWidget.currentItem().data(QtCore.Qt.UserRole)
-            id = current_item_data[0]
-            #pin = 1 if self.checkbox_pin.isChecked() else 0
             self.note_db.update_note(
-                id, self.lineEdit_title.text(), self.textEdit.toHtml()
+                self.current_note_id, self.textEdit.toHtml()
             )
-            print("saved!")
+            #print("saved text!")
             self.add_data_listview(saved_flag=True)
             self.dont_update_list = 1
 
@@ -346,6 +343,7 @@ class Ui_MainWindow(object):
                 data = self.listWidget.currentItem().data(QtCore.Qt.UserRole)
                 id = data[0]
                 msgBox = QtWidgets.QMessageBox()
+                msgBox.setWindowTitle('Confirmation')
                 msgBox.setText("Delete " + self.lineEdit_title.text()[:20] + ".. ?")
                 msgBox.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
                 return_value = msgBox.exec()
@@ -367,12 +365,19 @@ class Ui_MainWindow(object):
         print(f'text changed, chinging_listwidgetitem_flag: {self.changing_listwidgetitem_flag}')
         if w == "text":
             self.edittext_changed = True
+        elif w == "title":
+            if self.changing_listwidgetitem_flag == 1:
+                self.changing_listwidgetitem_flag = 2
+            elif self.changing_listwidgetitem_flag >= 2:
+                self.changing_listwidgetitem_flag = 0
+            else:
+                self.save_note_title()
+            return
         elif w == "pin":
             if self.changing_listwidgetitem_flag == 1:
                 self.changing_listwidgetitem_flag = 2
             elif self.changing_listwidgetitem_flag >= 2:
                 self.changing_listwidgetitem_flag = 0
-
             self.save_note_pin()
             return
 
@@ -382,7 +387,7 @@ class Ui_MainWindow(object):
         elif self.changing_listwidgetitem_flag >= 2:
             self.changing_listwidgetitem_flag = 0
             return
-
+        
         self.combobox_changed("Save")
 
     def search_in_note(self):
@@ -446,14 +451,20 @@ class Ui_MainWindow(object):
 
     
     def save_note_pin(self):
-        current_item_data = self.listWidget.currentItem().data(QtCore.Qt.UserRole)
-        id = current_item_data[0]
         pin = 1 if self.checkbox_pin.isChecked() else 0
         self.note_db.update_note_pin(
-            id, pin
+            self.current_note_id, pin
         )
         print("saved pin!")
         self.add_data_listview(saved_flag=True)
+
+    def save_note_title(self):
+        self.note_db.update_note_title(
+            self.current_note_id, self.lineEdit_title.text()
+        )
+        print("saved title!")
+        self.add_data_listview(saved_flag=True)
+        self.dont_update_list = 1
 
 
     def open_info_dialog(self):
