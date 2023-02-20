@@ -184,7 +184,9 @@ class Ui_MainWindow(object):
         )
 
         self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+B"), self)
-        self.shortcut.activated.connect(lambda: self.make_selection_bold())
+        self.shortcut.activated.connect(lambda: self.change_font_type("bold"))
+        self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+I"), self)
+        self.shortcut.activated.connect(lambda: self.change_font_type("italic"))
         self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+S"), self)
         self.shortcut.activated.connect(lambda: self.combobox_changed(txt="Save"))
         self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+N"), self)
@@ -317,12 +319,11 @@ class Ui_MainWindow(object):
 
     def combobox_changed(self, txt):
         if txt == "Save":
-            current_timestamp = int(time.time())
             current_item_data = self.listWidget.currentItem().data(QtCore.Qt.UserRole)
             id = current_item_data[0]
-            pin = 1 if self.checkbox_pin.isChecked() else 0
+            #pin = 1 if self.checkbox_pin.isChecked() else 0
             self.note_db.update_note(
-                id, self.lineEdit_title.text(), self.textEdit.toHtml(), pin
+                id, self.lineEdit_title.text(), self.textEdit.toHtml()
             )
             print("saved!")
             self.add_data_listview(saved_flag=True)
@@ -366,6 +367,14 @@ class Ui_MainWindow(object):
         print(f'text changed, chinging_listwidgetitem_flag: {self.changing_listwidgetitem_flag}')
         if w == "text":
             self.edittext_changed = True
+        elif w == "pin":
+            if self.changing_listwidgetitem_flag == 1:
+                self.changing_listwidgetitem_flag = 2
+            elif self.changing_listwidgetitem_flag >= 2:
+                self.changing_listwidgetitem_flag = 0
+
+            self.save_note_pin()
+            return
 
         if self.changing_listwidgetitem_flag == 1:
             self.changing_listwidgetitem_flag = 2
@@ -435,6 +444,18 @@ class Ui_MainWindow(object):
             else:
                 self.listWidget.setFocus()
 
+    
+    def save_note_pin(self):
+        current_item_data = self.listWidget.currentItem().data(QtCore.Qt.UserRole)
+        id = current_item_data[0]
+        pin = 1 if self.checkbox_pin.isChecked() else 0
+        self.note_db.update_note_pin(
+            id, pin
+        )
+        print("saved pin!")
+        self.add_data_listview(saved_flag=True)
+
+
     def open_info_dialog(self):
         num_of_chars = len(self.textEdit.toPlainText())
         current_note_created_formatted = datetime.datetime.fromtimestamp(
@@ -456,14 +477,19 @@ class Ui_MainWindow(object):
         new_window = ShortcutsDialog()
         new_window.exec_()
 
-    def make_selection_bold(self):
-        normal_weight = 50
-        bold_weight = 80
-        current_font_weight = self.textEdit.fontWeight()
-        if current_font_weight <= normal_weight:
-            self.textEdit.setFontWeight(bold_weight)
-        else:
-            self.textEdit.setFontWeight(normal_weight)
+    def change_font_type(self, type="bold"):
+        if type == "bold":
+            normal_weight = 50
+            bold_weight = 80
+            current_font_weight = self.textEdit.fontWeight()
+            if current_font_weight <= normal_weight:
+                self.textEdit.setFontWeight(bold_weight)
+            else:
+                self.textEdit.setFontWeight(normal_weight)
+        elif type == "italic":
+            is_italic = self.textEdit.fontItalic()
+            self.textEdit.setFontItalic(not is_italic)
+
 
     def change_selection_font_size(self, selected_size=17):
         self.textEdit.setFontPointSize(int(selected_size))
@@ -505,15 +531,49 @@ class MyDialog(QDialog):
     def __init__(self, id, created, last_mod, num_of_chars, parent=None):
         super(MyDialog, self).__init__(parent)
         self.setWindowTitle("Note Information")
-        layout = QVBoxLayout(self)
-        label1 = QLabel(f"database id: {id}")
-        layout.addWidget(label1)
-        label2 = QLabel(f"date created: {created}")
-        layout.addWidget(label2)
-        label3 = QLabel(f"date last modified: {last_mod}")
-        layout.addWidget(label3)
-        label4 = QLabel(f"Number of characters: {num_of_chars}")
-        layout.addWidget(label4)
+        layout = QVBoxLayout()
+        text = (
+        f"""
+                <table>
+          <thead>
+            <tr>
+              <th>INFORMATION TABLE</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Database ID:</td>
+              <td>{id}</td>
+            </tr>
+            <tr>
+              <td>Date Created:</td>
+              <td>{created}</td>
+            </tr>
+            <tr>
+              <td>Last Modified:</td>
+              <td>{last_mod}</td>
+            </tr>
+            <tr>
+              <td>Char Count:</td>
+              <td>{num_of_chars}</td>
+            </tr>
+          </tbody>
+        </table>
+        """
+        )
+        label = QLabel(text)
+        layout.addWidget(label)
+        self.setLayout(layout)
+        #layout = QVBoxLayout(self)
+        #label1 = QLabel(f"database id: {id}")
+        #layout.addWidget(label1)
+        #label2 = QLabel(f"date created: {created}")
+        #layout.addWidget(label2)
+        #label3 = QLabel(f"date last modified: {last_mod}")
+        #layout.addWidget(label3)
+        #label4 = QLabel(f"Number of characters: {num_of_chars}")
+        #layout.addWidget(label4)
 
 
 class ShortcutsDialog(QDialog):
@@ -524,15 +584,18 @@ class ShortcutsDialog(QDialog):
         text = (
             "<h2>Shortcuts:</h2>"
             "<ul>"
-            "<li><b>Ctrl TAB</b> -> Cycle through main widgets</li>"
-            "<li><b>Ctrl F</b> -> Search all</li>"
+            "<li><b>Ctrl TAB</b> -> Cycle through list and text fields</li>"
+            "<li><b>Ctrl F</b> -> Search in all notes</li>"
             "<li><b>Ctrl G</b> -> Search note</li>"
             "<li><b>Ctrl S</b> -> Manually save</li>"
             "<li><b>Ctrl N</b> -> New Note</li>"
             "<li><b>Ctrl D</b> -> Delete Note</li>"
             "<li><b>Ctrl P</b> -> Pin Note</li>"
             "<li><b>Ctrl M</b> -> Open Menu</li>"
-            f"<h4>Configuration: {NotesDB.app_dir}</h4>"
+            "<li><b>Ctrl Shift F</b> -> Open font size menu</li>"
+            "<li><b>Ctrl B</b> -> Bold text</li>"
+            "<li><b>Ctrl I</b> -> Italic text</li>"
+            f"<h4>Configuration and DB: {NotesDB.app_dir}</h4>"
             f"<p style='text-align: center;'>Delete the config file to reset it</p>"
             "</ul>"
         )

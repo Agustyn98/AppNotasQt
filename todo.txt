@@ -1,4 +1,6 @@
 DONE:
+pinning or unpinning shouldn't update the last mod timestamp
+    You don't need to update the pin on textchanged event
 
 
 --PROGRESS:
@@ -16,8 +18,6 @@ TODO:
         set the icon
         info dialog look better (ask chatgpt)
     OPERATIONAL:
-        pinning or unpinning shouldn't update the last mod timestamp
-            You don't need to update the pin on textchanged event
         synchronise in cloud
         
 

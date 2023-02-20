@@ -127,17 +127,31 @@ class NotesDB:
         )
         return self.cursor.fetchone()
 
-    def update_note(self, id, title, content, pinned):
+
+    def update_note(self, id, title, content):
         current_timestamp = int(time.time())
         self.cursor.execute(
             """
             UPDATE notes
-            SET title=?, content=?, last_modified=?, pinned=?
+            SET title=?, content=?, last_modified=?
             WHERE id=?;
             """,
-            (title, content, current_timestamp, pinned, id),
+            (title, content, current_timestamp, id),
         )
         self.conn.commit()
+    
+
+    def update_note_pin(self, id, pin):
+        self.cursor.execute(
+            """
+            UPDATE notes
+            SET pinned=?
+            WHERE id=?;
+            """,
+            (pin, id),
+        )
+        self.conn.commit()
+
 
     def delete_note(self, id):
         self.cursor.execute(
