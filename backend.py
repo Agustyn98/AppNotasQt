@@ -3,6 +3,7 @@ import time
 import os
 import platform
 import getpass
+import re
 
 
 class NotesDB:
@@ -184,17 +185,40 @@ class NotesDB:
         )
         self.conn.commit()
 
-    def search_notes(self, word):
+    
+    def get_all_notes(self) -> list:
         self.cursor.execute(
             """
-            SELECT id, title, created, last_modified, pinned
+            SELECT id, title, substr(content, 314) as content, created, last_modified, pinned
             FROM notes
-            WHERE title LIKE ? OR content LIKE ?
             ORDER BY pinned DESC, last_modified DESC;
             """,
-            ("%" + word + "%", "%" + word + "%"),
         )
         return self.cursor.fetchall()
+    
+    CLEANR = re.compile('<.*?>') 
+    def search_notes(self, word, case_sensitive=False):
+        all_notes = self.get_all_notes()
+        filtered_notes = []
+        for raw_note in all_notes:
+            content = raw_note[2]
+            clean_content = self._cleanhtml(content)
+            if case_sensitive:
+                if re.search(word, clean_content):
+                    filtered_notes.append(raw_note)
+            else:
+                if re.search(word, clean_content, re.IGNORECASE):
+                    filtered_notes.append(raw_note)
+        
+        print(filtered_notes)
+        return filtered_notes
+
+
+    def _cleanhtml(self, raw_html):
+        cleantext = re.sub(self.CLEANR, '', raw_html)
+        return cleantext
+
+
 
 
 if __name__ == "__main__":

@@ -10,9 +10,9 @@ fix menu size and items
 
 TODO:
     VISUAL:
+        colors of font color comboBox
         set the icon for windows
     OPERATIONAL:
-        Search case insensitive/sensitive
         synchronise in cloud
 
 BUGS:

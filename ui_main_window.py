@@ -251,7 +251,7 @@ class Ui_MainWindow(object):
         self.listWidget.clear()
 
         if search_all_flag and len(self.lineEdit_searchall.text()) > 0:
-            list_of_notes = self.note_db.search_notes(self.lineEdit_searchall.text())
+            list_of_notes = self.note_db.search_notes(self.lineEdit_searchall.text(), self._case_sensitive_search)
         else:
             list_of_notes = self.note_db.get_list_of_notes()
 
