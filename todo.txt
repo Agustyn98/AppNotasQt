@@ -16,12 +16,9 @@ TODO:
         set the icon
         info dialog look better (ask chatgpt)
     OPERATIONAL:
-        BUG on dev branch, things not getting saved on the first type >:( -?
-            it happens when you switch from a note to another one that has the exact same title
-        
-        synchronise in cloud
         pinning or unpinning shouldn't update the last mod timestamp
             You don't need to update the pin on textchanged event
+        synchronise in cloud
         
 
 FUTURE:
