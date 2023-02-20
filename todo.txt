@@ -10,14 +10,14 @@ fix menu size and items
 
 TODO:
     VISUAL:
-        set the icon
-        info dialog look better (ask chatgpt)
+        set the icon for windows
     OPERATIONAL:
+        Try using Markdown instead of html
         synchronise in cloud
 
 BUGS:
     search note, when removing highlight saves the note
-        I can't reproduce it
+        it happens after changing the font size
         
 
 FUTURE:

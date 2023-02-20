@@ -231,12 +231,12 @@ class Ui_MainWindow(object):
 
         if self.dont_update_list > 0:
             if self.edittext_changed:
-                print("Youre editing the QEditText, therefore not refreshing. \n")
+                #print("Youre editing the QEditText, therefore not refreshing. \n")
                 self.edittext_changed = False
                 return
 
         self.edittext_changed = False
-        print("Refreshing listview\n")
+        #print("Refreshing listview\n")
 
         if saved_flag:
             current_item_data = self.listWidget.currentItem().data(QtCore.Qt.UserRole)
@@ -303,11 +303,20 @@ class Ui_MainWindow(object):
             self.saved_flag = False
             return
 
-        print("Changing current item in listwidget..")
+        #print("Changing current item in listwidget..")
         self.changing_listwidgetitem_flag = 1
 
+        import time
+
         note = self.note_db.get_note_by_id(id)
-        self.textEdit.setText(note[2])
+        self.textEdit.to
+        print('Setting html')
+        start_time = time.time()
+        self.textEdit.setHtml(note[2])
+        #self.textEdit.setText(note[2])
+        end_time = time.time()
+        execution_time = end_time - start_time
+        print("Execution time:", execution_time, "seconds")
         self.lineEdit_title.blockSignals(True)
         self.lineEdit_title.clear()
         self.lineEdit_title.blockSignals(False)
@@ -362,7 +371,7 @@ class Ui_MainWindow(object):
     edittext_changed = True
 
     def unsaved_changes_text(self, w="text"):
-        print(f'text changed, chinging_listwidgetitem_flag: {self.changing_listwidgetitem_flag}')
+        #print(f'text changed, chinging_listwidgetitem_flag: {self.changing_listwidgetitem_flag}')
         if w == "text":
             self.edittext_changed = True
         elif w == "title":
@@ -455,14 +464,14 @@ class Ui_MainWindow(object):
         self.note_db.update_note_pin(
             self.current_note_id, pin
         )
-        print("saved pin!")
+        #print("saved pin!")
         self.add_data_listview(saved_flag=True)
 
     def save_note_title(self):
         self.note_db.update_note_title(
             self.current_note_id, self.lineEdit_title.text()
         )
-        print("saved title!")
+        #print("saved title!")
         self.add_data_listview(saved_flag=True)
         self.dont_update_list = 1
 
