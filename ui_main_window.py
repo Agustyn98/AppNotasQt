@@ -11,7 +11,7 @@ from PyQt5.QtGui import (
     QKeySequence,
     QTextCharFormat,
     QTextCursor,
-    QFont,
+    QBrush,
 )
 from PyQt5.QtWidgets import QDesktopWidget, QDialog, QMessageBox, QLineEdit
 
@@ -78,11 +78,15 @@ class Ui_MainWindow(object):
         self.lineEdit_searchall.setObjectName("lineEdit_searchall")
         self.horizontalLayout_3.addWidget(self.lineEdit_searchall)
         # ComboBox Font Size
-        self.comboBox_fontsize = QtWidgets.QComboBox(self.centralwidget)
+        self.comboBox_fontcolor = QtWidgets.QComboBox(self.centralwidget)
         # self.comboBox_fontsize.setMaximumWidth(150)
-        self.comboBox_fontsize.addItem("Font Size")
-        self.comboBox_fontsize.addItems([str(x) for x in range(10, 28, 2)])
-        self.horizontalLayout_3.addWidget(self.comboBox_fontsize)
+        self.comboBox_fontcolor.addItem("Font Color")
+        colors = ["Red", "Green", "Blue", "Yellow", "Purple", "White"]
+        self.comboBox_fontcolor.addItems(colors)
+        self.comboBox.setItemData(3, QColor(255, 0, 0), QtCore.Qt.ItemDataRole.TextColorRole)
+        self.comboBox_fontcolor.setItemData(1, QBrush(Qt.GlobalColor.black), Qt.ItemDataRole.TextColorRole)
+        self.comboBox_fontcolor.setItemData(2, QBrush(Qt.GlobalColor.red), Qt.ItemDataRole.TextColorRole)
+        self.horizontalLayout_3.addWidget(self.comboBox_fontcolor)
         # ComboBox Font Color
         # self.comboBox_fontcolor = QtWidgets.QComboBox(self.centralwidget)
         # self.comboBox_fontcolor.setMaximumWidth(120)
@@ -96,7 +100,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_3.setStretch(1, 58)
         self.horizontalLayout_3.setStretch(2, 58)
         self.horizontalLayout_3.setStretch(3, 10)
-        self.horizontalLayout_3.setStretch(4, 10)
+        self.horizontalLayout_3.setStretch(4, 1)
         self.horizontalLayout_3.setStretch(5, 10)
         self.verticalLayout.addLayout(self.horizontalLayout_3)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
@@ -123,6 +127,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_3.addWidget(self.lineEdit_title)
         # QTextEdit
         self.textEdit = QtWidgets.QTextEdit(self.centralwidget)
+        self.textEdit.setAcceptRichText(False)
         font = QtGui.QFont()
         if self._textedit_font is not None:
             font.setPointSize(self._textedit_font)
@@ -199,12 +204,12 @@ class Ui_MainWindow(object):
         self.shortcut.activated.connect(lambda: self.lineEdit_searchall.setFocus())
         self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+P"), self)
         self.shortcut.activated.connect(
-            lambda: self.checkbox_pin.setCheckState(not self.checkbox_pin.checkState())
+            lambda: self.checkbox_pin_activated()
         )
         self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+M"), self)
         self.shortcut.activated.connect(lambda: self.comboBox.showPopup())
         self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+Shift+F"), self)
-        self.shortcut.activated.connect(lambda: self.comboBox_fontsize.showPopup())
+        self.shortcut.activated.connect(lambda: self.comboBox_fontcolor.showPopup())
 
         self.textEdit.textChanged.connect(lambda: self.unsaved_changes_text())
         self.lineEdit_title.textChanged.connect(
@@ -213,8 +218,8 @@ class Ui_MainWindow(object):
         self.checkbox_pin.stateChanged.connect(
             lambda: self.unsaved_changes_text(w="pin")
         )
-        self.comboBox_fontsize.currentTextChanged.connect(
-            lambda x: self.change_selection_font_size(x)
+        self.comboBox_fontcolor.currentTextChanged.connect(
+            lambda x: self.change_selection_fontcolor(x)
         )
 
         self.add_data_listview()
@@ -309,7 +314,6 @@ class Ui_MainWindow(object):
         import time
 
         note = self.note_db.get_note_by_id(id)
-        self.textEdit.to
         print('Setting html')
         start_time = time.time()
         self.textEdit.setHtml(note[2])
@@ -511,11 +515,32 @@ class Ui_MainWindow(object):
             self.textEdit.setFontItalic(not is_italic)
 
 
-    def change_selection_font_size(self, selected_size=17):
-        self.textEdit.setFontPointSize(int(selected_size))
-        self.comboBox_fontsize.blockSignals(True)
-        self.comboBox_fontsize.setCurrentIndex(0)
-        self.comboBox_fontsize.blockSignals(False)
+    def change_selection_fontcolor(self, color='White'):
+        #self.textEdit.setFontPointSize(int(selected_size))
+        if color == 'Red':
+            self.textEdit.setTextColor(QColor(255, 0, 0))
+        elif color == 'Green':
+            self.textEdit.setTextColor(QColor(0, 255, 0))
+        elif color == 'Blue':
+            self.textEdit.setTextColor(QColor(0, 128, 255))
+        elif color == 'Yellow':
+            self.textEdit.setTextColor(QColor(255, 255, 0))
+        elif color == 'Purple':
+            self.textEdit.setTextColor(QColor(186, 85, 211))
+        elif color == 'White':
+            self.textEdit.setTextColor(QColor(255, 255, 255))
+
+        self.comboBox_fontcolor.blockSignals(True)
+        self.comboBox_fontcolor.setCurrentIndex(0)
+        self.comboBox_fontcolor.blockSignals(False)
+    
+    def checkbox_pin_activated(self):
+        self.checkbox_pin.setCheckState(not self.checkbox_pin.checkState())
+        if self.checkbox_pin.checkState():
+            self.checkbox_pin.setText("🏲")
+        else:
+            self.checkbox_pin.setText("🏱")
+
 
     def center_screen(self):
         qr = self.frameGeometry()
@@ -534,7 +559,7 @@ class Ui_MainWindow(object):
                 value = blocks[1]
                 value = value.strip()
 
-                if config == "textbox_font_size":
+                if config == "ui_font_size":
                     self._textedit_font = int(value)
                 elif config == "window_size":
                     last_sizes = value.split("x")

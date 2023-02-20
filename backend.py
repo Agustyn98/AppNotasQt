@@ -119,7 +119,7 @@ class NotesDB:
     def get_note_by_id(self, id):
         self.cursor.execute(
             """
-            SELECT id, title, content, created, last_modified, pinned
+            SELECT id, title, substr(content, 314) as content, created, last_modified, pinned
             FROM notes
             WHERE id=?;
             """,
