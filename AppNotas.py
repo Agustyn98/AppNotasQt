@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
-from PyQt5.QtGui import QFont
+from PyQt5.QtGui import QFont, QIcon
 from PyQt5 import QtWidgets
 import qdarktheme
 from backend import NotesDB
@@ -43,6 +43,8 @@ if __name__ == "__main__":
         font.setFamily('sans-serif')
         font.setPointSize(font_size)
         app.setFont(font)
+        icons_path = f"{NotesDB.get_dir_path()}/icons/"
+        app.setWindowIcon(QIcon(f'{icons_path}app_icon.jpg'))
         qdarktheme.setup_theme(
             custom_colors={
                 "primary": "#F166FF",

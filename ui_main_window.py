@@ -81,14 +81,13 @@ class Ui_MainWindow(object):
         self.comboBox_fontcolor = QtWidgets.QComboBox(self.centralwidget)
         # self.comboBox_fontsize.setMaximumWidth(150)
         self.comboBox_fontcolor.addItem("Font Color")
-        icon_red = QIcon("icons/red.png")
-        colors = ["Red", "Green", "Blue", "Yellow", "Purple", "White"]
-        self.comboBox_fontcolor.addItem(QIcon("icons/red.png"), "Red", None)
-        self.comboBox_fontcolor.addItem(QIcon("icons/green.png"), "Green", None)
-        self.comboBox_fontcolor.addItem(QIcon("icons/blue.png"), "Blue", None)
-        self.comboBox_fontcolor.addItem(QIcon("icons/yellow.png"), "Yellow", None)
-        self.comboBox_fontcolor.addItem(QIcon("icons/purple.png"), "Purple", None)
-        self.comboBox_fontcolor.addItem(QIcon("icons/white.png"), "White", None)
+        self.icons_path = f"{NotesDB.get_dir_path()}/icons/"
+        self.comboBox_fontcolor.addItem(QIcon(f"{self.icons_path}red.png"), "Red", None)
+        self.comboBox_fontcolor.addItem(QIcon(f"{self.icons_path}/green.png"), "Green", None)
+        self.comboBox_fontcolor.addItem(QIcon(f"{self.icons_path}/blue.png"), "Blue", None)
+        self.comboBox_fontcolor.addItem(QIcon(f"{self.icons_path}/yellow.png"), "Yellow", None)
+        self.comboBox_fontcolor.addItem(QIcon(f"{self.icons_path}/purple.png"), "Purple", None)
+        self.comboBox_fontcolor.addItem(QIcon(f"{self.icons_path}/white.png"), "White", None)
 
         self.comboBox.setItemData(
             3, QColor(255, 0, 0), QtCore.Qt.ItemDataRole.TextColorRole

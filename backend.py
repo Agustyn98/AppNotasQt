@@ -2,7 +2,6 @@ import sqlite3
 import time
 import os
 import platform
-import getpass
 import re
 
 
@@ -36,12 +35,10 @@ class NotesDB:
         if current_os == "Windows":
             NotesDB.app_dir = os.path.join(home, "AppData", "Local", app_dir_name)
         elif current_os == "Darwin":
-            username = getpass.getuser()
             NotesDB.app_dir = os.path.join(
                 home, "Library", "Application Support", app_dir_name
             )
         else:
-            username = getpass.getuser()
             NotesDB.app_dir = os.path.join(home, f".{app_dir_name}")
 
         if not os.path.exists(NotesDB.app_dir):
