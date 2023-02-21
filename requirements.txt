@@ -1,6 +1,4 @@
 pyqt5 
 pyqtdarktheme
-# Only for deploying, comment out
+# Only for deploying
 PyInstaller
-# Dropbox
-dropbox
