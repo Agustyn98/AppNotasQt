@@ -51,7 +51,7 @@ def compare_hases(local_db, dpx_db):
         return False
 
 
-def upload_db(local_db_path, dpx_db_path):
+def upload_db(local_db_path, dpx_db_path=dpx_db_path):
     if compare_hases(local_db_path, dpx_db_path):
         print('Not uploading because the file has not changed')
         return -1
@@ -61,7 +61,7 @@ def upload_db(local_db_path, dpx_db_path):
 
     print(f'File uploaded to {dpx_db_path}')
 
-def download_db(local_db_path, dpx_db_path):
+def download_db(local_db_path, dpx_db_path=dpx_db_path):
     if compare_hases(local_db_path, dpx_db_path):
         print('Not downloading because the file has not changed')
         return -1

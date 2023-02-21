@@ -6,6 +6,14 @@ import re
 
 
 class NotesDB:
+
+    _instance = None
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+        return cls._instance
+
+    db_path = ''
     def __init__(self):
         db_name = "notes.db"
         dir_path = NotesDB.get_dir_path()
@@ -226,9 +234,13 @@ class NotesDB:
 
 
 if __name__ == "__main__":
-    db = NotesDB("notes.db")
+    import pdb
+    db = NotesDB()
+    db2 = NotesDB()
 
-    db.get_dir_path()
+    print(db is db2)
+    pdb.set_trace()
+
     quit()
     # add a new note
     db.add_note("Test note", "This is a test note", 1)

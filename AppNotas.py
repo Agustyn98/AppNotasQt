@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-
 import sys
 from PyQt5.QtGui import QFont, QIcon
 from PyQt5 import QtWidgets
 import qdarktheme
 from backend import NotesDB
+from cloud import download_db, upload_db
 
 
 # Import the converted .ui file
@@ -18,7 +18,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
 
 def read_font_size() -> int:
-
     NotesDB.get_dir_path()
     config = NotesDB.create_config()
     with open(config) as f:
@@ -34,8 +33,27 @@ def read_font_size() -> int:
                 return 16
 
 
+def upload_before_quitting():
+    notes = NotesDB()
+    notes.vacuum_db()
+    try:
+        #upload_db(NotesDB.db_path)
+        print('Database uploaded')
+    except Exception as e:
+        print("DATABASE COULDN'T BE UPLOADED")
+        print(e)
+
+def download_before_starting():
+    try:
+        #download_db()
+        print('Downloaded....' * 3)
+    except Exception as e:
+        print("DATABASE COULDN'T BE UPLOADED")
+
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
+    app.lastWindowClosed.connect(upload_before_quitting)
+    download_before_starting()
 
     if True:
         font_size = read_font_size()

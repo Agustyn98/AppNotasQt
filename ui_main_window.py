@@ -239,6 +239,7 @@ class Ui_MainWindow(object):
         self.add_data_listview()
         self.listWidget.setFocus()
 
+    print('notes instanciated')
     note_db = NotesDB()
 
     saved_flag = False
