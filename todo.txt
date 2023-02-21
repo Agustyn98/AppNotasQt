@@ -5,13 +5,11 @@ DONE:
 
 
 BLOCKED:
-fix menu size and items
-    can't get the menu combobox to be smaller
 
 TODO:
     VISUAL:
     OPERATIONAL:
-        synchronise in cloud
+        I need to do the download/upload by dates
         installation
 
 BUGS:

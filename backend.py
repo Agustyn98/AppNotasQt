@@ -13,7 +13,6 @@ class NotesDB:
             cls._instance = super().__new__(cls)
         return cls._instance
 
-    db_path = ''
     def __init__(self):
         db_name = "notes.db"
         dir_path = NotesDB.get_dir_path()
