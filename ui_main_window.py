@@ -328,6 +328,8 @@ class Ui_MainWindow(object):
         self.changing_listwidgetitem_flag = 1
 
         note = self.note_db.get_note_by_id(id)
+
+        # This line causes lag loading a large note depending on the wrapping mode
         self.textEdit.setHtml(note[2])
         # self.textEdit.setText(note[2])
         self.lineEdit_title.blockSignals(True)
