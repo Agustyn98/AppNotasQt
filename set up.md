@@ -9,3 +9,5 @@ mkdir ~/.appnotas
 
 Copy the icons there
 cp icons ~/.appnotas/ -r
+
+The executable is dist/AppNotas/AppNotas
