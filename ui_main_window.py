@@ -81,11 +81,26 @@ class Ui_MainWindow(object):
         self.comboBox_fontcolor = QtWidgets.QComboBox(self.centralwidget)
         # self.comboBox_fontsize.setMaximumWidth(150)
         self.comboBox_fontcolor.addItem("Font Color")
+        icon_red = QIcon("icons/red.png")
         colors = ["Red", "Green", "Blue", "Yellow", "Purple", "White"]
-        self.comboBox_fontcolor.addItems(colors)
-        self.comboBox.setItemData(3, QColor(255, 0, 0), QtCore.Qt.ItemDataRole.TextColorRole)
-        self.comboBox_fontcolor.setItemData(1, QBrush(Qt.GlobalColor.blue), Qt.ItemDataRole.TextColorRole)
-        self.comboBox_fontcolor.setItemData(2, QBrush(Qt.GlobalColor.red), Qt.ItemDataRole.TextColorRole)
+        self.comboBox_fontcolor.addItem(QIcon("icons/red.png"), "Red", None)
+        self.comboBox_fontcolor.addItem(QIcon("icons/green.png"), "Green", None)
+        self.comboBox_fontcolor.addItem(QIcon("icons/blue.png"), "Blue", None)
+        self.comboBox_fontcolor.addItem(QIcon("icons/yellow.png"), "Yellow", None)
+        self.comboBox_fontcolor.addItem(QIcon("icons/purple.png"), "Purple", None)
+        self.comboBox_fontcolor.addItem(QIcon("icons/white.png"), "White", None)
+
+        self.comboBox.setItemData(
+            3, QColor(255, 0, 0), QtCore.Qt.ItemDataRole.TextColorRole
+        )
+        self.comboBox_fontcolor.setItemData(
+            1, QBrush(Qt.GlobalColor.blue), Qt.ItemDataRole.TextColorRole
+        )
+        self.comboBox_fontcolor.setItemData(
+            2, QBrush(Qt.GlobalColor.red), Qt.ItemDataRole.TextColorRole
+        )
+
+        self.comboBox_fontcolor.setStyleSheet
         self.horizontalLayout_3.addWidget(self.comboBox_fontcolor)
         # ComboBox Font Color
         # self.comboBox_fontcolor = QtWidgets.QComboBox(self.centralwidget)
@@ -118,7 +133,9 @@ class Ui_MainWindow(object):
         self.verticalLayout_3 = QtWidgets.QVBoxLayout()
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.lineEdit_title = QtWidgets.QLineEdit(self.centralwidget)
-        self.lineEdit_title.setStyleSheet("QLineEdit#lineEdit_title{color:MediumOrchid}")
+        self.lineEdit_title.setStyleSheet(
+            "QLineEdit#lineEdit_title{color:MediumOrchid}"
+        )
         font = QtGui.QFont()
         font.setBold(True)
         font.setWeight(80)
@@ -203,9 +220,7 @@ class Ui_MainWindow(object):
         self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+G"), self)
         self.shortcut.activated.connect(lambda: self.lineEdit_searchall.setFocus())
         self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+P"), self)
-        self.shortcut.activated.connect(
-            lambda: self.checkbox_pin_activated()
-        )
+        self.shortcut.activated.connect(lambda: self.checkbox_pin_activated())
         self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+M"), self)
         self.shortcut.activated.connect(lambda: self.comboBox.showPopup())
         self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+Shift+F"), self)
@@ -251,11 +266,13 @@ class Ui_MainWindow(object):
         self.listWidget.clear()
 
         if search_all_flag and len(self.lineEdit_searchall.text()) > 0:
-            list_of_notes = self.note_db.search_notes(self.lineEdit_searchall.text(), self._case_sensitive_search)
+            list_of_notes = self.note_db.search_notes(
+                self.lineEdit_searchall.text(), self._case_sensitive_search
+            )
         else:
             list_of_notes = self.note_db.get_list_of_notes()
 
-        icon = QIcon("pin.png")
+        icon = QIcon("icons/pin.png")
         for note in list_of_notes:
             item_to_add = QtWidgets.QListWidgetItem()
             if note[4] == 1:
@@ -299,7 +316,7 @@ class Ui_MainWindow(object):
 
         if previous_obj is not None:
             previous_obj = previous_obj.data(QtCore.Qt.UserRole)
-            #print(f'previous obj is not none, its {previous_obj}, and current id is {id}')
+            # print(f'previous obj is not none, its {previous_obj}, and current id is {id}')
             if id != previous_obj[0]:
                 self.dont_update_list = 0
 
@@ -308,19 +325,14 @@ class Ui_MainWindow(object):
             self.saved_flag = False
             return
 
-        #print("Changing current item in listwidget..")
+        # print("Changing current item in listwidget..")
         self.changing_listwidgetitem_flag = 1
 
         import time
 
         note = self.note_db.get_note_by_id(id)
-        print('Setting html')
-        start_time = time.time()
         self.textEdit.setHtml(note[2])
-        #self.textEdit.setText(note[2])
-        end_time = time.time()
-        execution_time = end_time - start_time
-        print("Execution time:", execution_time, "seconds")
+        # self.textEdit.setText(note[2])
         self.lineEdit_title.blockSignals(True)
         self.lineEdit_title.clear()
         self.lineEdit_title.blockSignals(False)
@@ -332,10 +344,8 @@ class Ui_MainWindow(object):
 
     def combobox_changed(self, txt):
         if txt == "Save":
-            self.note_db.update_note(
-                self.current_note_id, self.textEdit.toHtml()
-            )
-            #print("saved text!")
+            self.note_db.update_note(self.current_note_id, self.textEdit.toHtml())
+            # print("saved text!")
             self.add_data_listview(saved_flag=True)
             self.dont_update_list = 1
 
@@ -355,9 +365,11 @@ class Ui_MainWindow(object):
             if self.listWidget.currentItem() is not None:
                 data = self.listWidget.currentItem().data(QtCore.Qt.UserRole)
                 id = data[0]
+                # msgBox = QtWidgets.QMessageBox.warning(None, 'Confirmation', "Delete " + self.lineEdit_title.text()[:20] + ".. ?", QMessageBox.Yes | QMessageBox.No)
                 msgBox = QtWidgets.QMessageBox()
-                msgBox.setWindowTitle('Confirmation')
+                msgBox.setWindowTitle("Confirmation")
                 msgBox.setText("Delete " + self.lineEdit_title.text()[:20] + ".. ?")
+                msgBox.setIcon(QMessageBox.Warning)
                 msgBox.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
                 return_value = msgBox.exec()
                 if return_value == QMessageBox.Yes:
@@ -375,7 +387,7 @@ class Ui_MainWindow(object):
     edittext_changed = True
 
     def unsaved_changes_text(self, w="text"):
-        #print(f'text changed, chinging_listwidgetitem_flag: {self.changing_listwidgetitem_flag}')
+        # print(f'text changed, chinging_listwidgetitem_flag: {self.changing_listwidgetitem_flag}')
         if w == "text":
             self.edittext_changed = True
         elif w == "title":
@@ -400,16 +412,16 @@ class Ui_MainWindow(object):
         elif self.changing_listwidgetitem_flag >= 2:
             self.changing_listwidgetitem_flag = 0
             return
-        
+
         self.combobox_changed("Save")
 
     def search_in_note(self):
-        self.textEdit.blockSignals(True)
         word = self.lineEdit_searchnote.text()
 
         if len(word) < 1:
             return
 
+        self.textEdit.blockSignals(True)
         cursor = self.textEdit.textCursor()
         # Setup the desired format for matches
         format = QTextCharFormat()
@@ -466,23 +478,17 @@ class Ui_MainWindow(object):
             else:
                 self.listWidget.setFocus()
 
-    
     def save_note_pin(self):
         pin = 1 if self.checkbox_pin.isChecked() else 0
-        self.note_db.update_note_pin(
-            self.current_note_id, pin
-        )
-        #print("saved pin!")
+        self.note_db.update_note_pin(self.current_note_id, pin)
+        # print("saved pin!")
         self.add_data_listview(saved_flag=True)
 
     def save_note_title(self):
-        self.note_db.update_note_title(
-            self.current_note_id, self.lineEdit_title.text()
-        )
-        #print("saved title!")
+        self.note_db.update_note_title(self.current_note_id, self.lineEdit_title.text())
+        # print("saved title!")
         self.add_data_listview(saved_flag=True)
         self.dont_update_list = 1
-
 
     def open_info_dialog(self):
         num_of_chars = len(self.textEdit.toPlainText())
@@ -518,33 +524,31 @@ class Ui_MainWindow(object):
             is_italic = self.textEdit.fontItalic()
             self.textEdit.setFontItalic(not is_italic)
 
-
-    def change_selection_fontcolor(self, color='White'):
-        #self.textEdit.setFontPointSize(int(selected_size))
-        if color == 'Red':
+    def change_selection_fontcolor(self, color="White"):
+        # self.textEdit.setFontPointSize(int(selected_size))
+        if color == "Red":
             self.textEdit.setTextColor(QColor(255, 0, 0))
-        elif color == 'Green':
+        elif color == "Green":
             self.textEdit.setTextColor(QColor(0, 255, 0))
-        elif color == 'Blue':
+        elif color == "Blue":
             self.textEdit.setTextColor(QColor(0, 128, 255))
-        elif color == 'Yellow':
+        elif color == "Yellow":
             self.textEdit.setTextColor(QColor(255, 255, 0))
-        elif color == 'Purple':
+        elif color == "Purple":
             self.textEdit.setTextColor(QColor(186, 85, 211))
-        elif color == 'White':
+        elif color == "White":
             self.textEdit.setTextColor(QColor(255, 255, 255))
 
         self.comboBox_fontcolor.blockSignals(True)
         self.comboBox_fontcolor.setCurrentIndex(0)
         self.comboBox_fontcolor.blockSignals(False)
-    
+
     def checkbox_pin_activated(self):
         self.checkbox_pin.setCheckState(not self.checkbox_pin.checkState())
         if self.checkbox_pin.checkState():
             self.checkbox_pin.setText("🏲")
         else:
             self.checkbox_pin.setText("🏱")
-
 
     def center_screen(self):
         qr = self.frameGeometry()
@@ -554,6 +558,7 @@ class Ui_MainWindow(object):
 
     _textedit_font = None
     _case_sensitive_search = False
+
     def read_config(self):
         config_path = NotesDB.config_path
         with open(config_path) as f:
@@ -573,8 +578,6 @@ class Ui_MainWindow(object):
                         self.center_screen()
                 elif config == "case_sensitive_search":
                     self._case_sensitive_search = True if value == "true" else False
-                    
-
 
 
 from PyQt5.QtWidgets import QDialog, QLabel, QVBoxLayout
@@ -585,8 +588,7 @@ class MyDialog(QDialog):
         super(MyDialog, self).__init__(parent)
         self.setWindowTitle("Note Information")
         layout = QVBoxLayout()
-        text = (
-        f"""
+        text = f"""
                 <table>
           <thead>
             <tr>
@@ -614,19 +616,18 @@ class MyDialog(QDialog):
           </tbody>
         </table>
         """
-        )
         label = QLabel(text)
         layout.addWidget(label)
         self.setLayout(layout)
-        #layout = QVBoxLayout(self)
-        #label1 = QLabel(f"database id: {id}")
-        #layout.addWidget(label1)
-        #label2 = QLabel(f"date created: {created}")
-        #layout.addWidget(label2)
-        #label3 = QLabel(f"date last modified: {last_mod}")
-        #layout.addWidget(label3)
-        #label4 = QLabel(f"Number of characters: {num_of_chars}")
-        #layout.addWidget(label4)
+        # layout = QVBoxLayout(self)
+        # label1 = QLabel(f"database id: {id}")
+        # layout.addWidget(label1)
+        # label2 = QLabel(f"date created: {created}")
+        # layout.addWidget(label2)
+        # label3 = QLabel(f"date last modified: {last_mod}")
+        # layout.addWidget(label3)
+        # label4 = QLabel(f"Number of characters: {num_of_chars}")
+        # layout.addWidget(label4)
 
 
 class ShortcutsDialog(QDialog):
