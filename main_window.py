@@ -34,40 +34,13 @@ def read_font_size() -> int:
                 return 16
 
 
-def main():
-    app = QtWidgets.QApplication(sys.argv)
-
-    if True:
-        font_size = read_font_size()
-        font = QFont()
-        font.setPointSize(font_size)
-        app.setFont(font)
-        qdarktheme.setup_theme(
-            custom_colors={
-                "primary": "#F166FF",
-                "foreground": "#FFFFFF",
-                "primary>list.selectionBackground": "9D479F",
-                "primary>list.inactiveSelectionBackground": "#9D479F",
-                "primary>list.inactiveSelectionBackground": "#783E7A",
-                "input.background": "202124",
-            }
-        )
-
-
-    else:
-        app.setStyle("Fusion")
-
-    window = MainWindow()
-    window.show()
-    sys.exit(app.exec_())
-
-
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
 
     if True:
         font_size = read_font_size()
         font = QFont()
+        font.setFamily('sans-serif')
         font.setPointSize(font_size)
         app.setFont(font)
         qdarktheme.setup_theme(

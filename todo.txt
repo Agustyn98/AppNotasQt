@@ -21,7 +21,7 @@ BUGS:
         
 
 FUTURE:
-color of widgets when hovered over
+faster rendering of html
 encrypt db
-colors in the text font
+color of widgets when hovered over
 ctrl z undos too much

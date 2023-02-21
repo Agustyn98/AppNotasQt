@@ -84,7 +84,7 @@ class Ui_MainWindow(object):
         colors = ["Red", "Green", "Blue", "Yellow", "Purple", "White"]
         self.comboBox_fontcolor.addItems(colors)
         self.comboBox.setItemData(3, QColor(255, 0, 0), QtCore.Qt.ItemDataRole.TextColorRole)
-        self.comboBox_fontcolor.setItemData(1, QBrush(Qt.GlobalColor.black), Qt.ItemDataRole.TextColorRole)
+        self.comboBox_fontcolor.setItemData(1, QBrush(Qt.GlobalColor.blue), Qt.ItemDataRole.TextColorRole)
         self.comboBox_fontcolor.setItemData(2, QBrush(Qt.GlobalColor.red), Qt.ItemDataRole.TextColorRole)
         self.horizontalLayout_3.addWidget(self.comboBox_fontcolor)
         # ComboBox Font Color
