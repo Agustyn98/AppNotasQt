@@ -215,6 +215,14 @@ class NotesDB:
         cleantext = re.sub(self.CLEANR, '', raw_html)
         return cleantext
 
+    def vacuum_db(self):
+        self.cursor.execute(
+            """
+            VACUUM;
+            """
+        )
+        self.conn.commit()
+
 
 
 

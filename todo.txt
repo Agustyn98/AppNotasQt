@@ -10,10 +10,9 @@ fix menu size and items
 
 TODO:
     VISUAL:
-        set the icon for windows
     OPERATIONAL:
-        icon path when building
         synchronise in cloud
+        installation
 
 BUGS:
     search note, when removing highlight saves the note
