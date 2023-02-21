@@ -331,7 +331,7 @@ class Ui_MainWindow(object):
 
         # This line causes lag loading a large note depending on the wrapping mode
         self.textEdit.setHtml(note[2])
-        # self.textEdit.setText(note[2])
+
         self.lineEdit_title.blockSignals(True)
         self.lineEdit_title.clear()
         self.lineEdit_title.blockSignals(False)
