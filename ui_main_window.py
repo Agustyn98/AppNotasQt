@@ -239,7 +239,6 @@ class Ui_MainWindow(object):
         self.add_data_listview()
         self.listWidget.setFocus()
 
-    print('notes instanciated')
     note_db = NotesDB()
 
     saved_flag = False
@@ -327,8 +326,6 @@ class Ui_MainWindow(object):
 
         # print("Changing current item in listwidget..")
         self.changing_listwidgetitem_flag = 1
-
-        import time
 
         note = self.note_db.get_note_by_id(id)
         self.textEdit.setHtml(note[2])

@@ -37,22 +37,6 @@ db_name = "notes.db"
 dir_path = NotesDB.get_dir_path()
 db_path = os.path.join(dir_path, db_name)
 
-def upload_before_quitting():
-    notes = NotesDB()
-    notes.vacuum_db()
-    try:
-        upload_db(db_path)
-    except Exception as e:
-        print("DATABASE COULDN'T BE UPLOADED")
-        print(e)
-
-def download_before_starting():
-    try:
-        download_db(db_path)
-    except Exception as e:
-        print("DATABASE COULDN'T BE UPLOADED")
-        print(e)
-
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     #app.lastWindowClosed.connect(upload_before_quitting)
