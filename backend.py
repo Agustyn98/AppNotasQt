@@ -207,7 +207,6 @@ class NotesDB:
                 if re.search(word, clean_content, re.IGNORECASE):
                     filtered_notes.append(raw_note)
         
-        print(filtered_notes)
         return filtered_notes
 
 

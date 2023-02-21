@@ -424,7 +424,7 @@ class Ui_MainWindow(object):
         cursor = self.textEdit.textCursor()
         # Setup the desired format for matches
         format = QTextCharFormat()
-        format.setBackground(QColor(120, 120, 120))
+        format.setBackground(QColor(123, 85, 211))
 
         # Setup the regex engine
         if self._case_sensitive_search:
