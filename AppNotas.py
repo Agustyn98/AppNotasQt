@@ -41,6 +41,8 @@ if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     app.lastWindowClosed.connect(get_instance().vacuum_db)
     #download_before_starting()
+    icons_path = f"{NotesDB.get_dir_path()}/icons/"
+    app.setWindowIcon(QIcon(f'{icons_path}app_icon.jpg'))
 
     if True:
         font_size = read_font_size()
