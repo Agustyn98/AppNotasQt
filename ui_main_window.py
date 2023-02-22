@@ -89,15 +89,6 @@ class Ui_MainWindow(object):
         self.comboBox_fontcolor.addItem(QIcon(f"{self.icons_path}purple.png"), "Purple", None)
         self.comboBox_fontcolor.addItem(QIcon(f"{self.icons_path}white.png"), "White", None)
 
-        self.comboBox.setItemData(
-            3, QColor(255, 0, 0), QtCore.Qt.ItemDataRole.TextColorRole
-        )
-        self.comboBox_fontcolor.setItemData(
-            1, QBrush(Qt.GlobalColor.blue), Qt.ItemDataRole.TextColorRole
-        )
-        self.comboBox_fontcolor.setItemData(
-            2, QBrush(Qt.GlobalColor.red), Qt.ItemDataRole.TextColorRole
-        )
 
         self.horizontalLayout_3.addWidget(self.comboBox_fontcolor)
         # ComboBox Font Color
@@ -121,11 +112,11 @@ class Ui_MainWindow(object):
         # Qlistwidget
         self.listWidget = QtWidgets.QListWidget(self.centralwidget)
         self.listWidget.setAlternatingRowColors(True)
-        # self.listWidget.horizontalScrollBar().setVisible(False)
-        # self.listWidget.verticalScrollBar().setVisible(False)
-        # self.listWidget.setStyleSheet("QListWidget::item { border: 1px solid red }")
         self.listWidget.setStyleSheet("QListWidget:focus { border: 1px solid #F166FF}")
-        # self.listWidget.setWrapping(True)
+        # Workaround for Windows bug where listwidget font will stay small for some reason
+        listWidget_font = self.listWidget.font()
+        listWidget_font.setPointSize(self._textedit_font)
+        self.listWidget.setFont(listWidget_font)
 
         self.horizontalLayout.addWidget(self.listWidget)
         self.verticalLayout_3 = QtWidgets.QVBoxLayout()
