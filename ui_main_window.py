@@ -645,7 +645,7 @@ class ShortcutsDialog(QDialog):
             "<li><b>Ctrl D</b> -> Delete Note</li>"
             "<li><b>Ctrl P</b> -> Pin Note</li>"
             "<li><b>Ctrl M</b> -> Open Menu</li>"
-            "<li><b>Ctrl Shift F</b> -> Open font size menu</li>"
+            "<li><b>Ctrl Shift F</b> -> Open font color menu</li>"
             "<li><b>Ctrl B</b> -> Bold text</li>"
             "<li><b>Ctrl I</b> -> Italic text</li>"
             f"<h4>Configuration and DB: {NotesDB.app_dir}</h4>"
