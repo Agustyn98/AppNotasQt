@@ -73,7 +73,8 @@ class Ui_MainWindow(object):
         self.comboBox_fontcolor.addItem(QIcon(f"{self.icons_path}yellow.png"), "Yellow", None)
         self.comboBox_fontcolor.addItem(QIcon(f"{self.icons_path}purple.png"), "Purple", None)
         self.comboBox_fontcolor.addItem(QIcon(f"{self.icons_path}white.png"), "White", None)
-
+        # Pin icon
+        self.pin_icon = QIcon(f"{self.icons_path}pin.png")
 
         self.horizontalLayout_3.addWidget(self.comboBox_fontcolor)
         # Buttons
@@ -217,7 +218,6 @@ class Ui_MainWindow(object):
 
     dont_update_list = 0
 
-    pin_icon = QIcon(f"{self.icons_path}pin.png")
     def add_data_listview(self, saved_flag=False, search_all_flag=False):
         """Refresh listview"""
 
