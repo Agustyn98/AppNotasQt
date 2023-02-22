@@ -4,15 +4,15 @@ import os
 import platform
 import re
 
+_instance = None
+def get_instance():
+    global _instance
+    if _instance is None:
+        _instance = NotesDB()
 
+    return _instance
+        
 class NotesDB:
-
-    _instance = None
-    def __new__(cls):
-        if cls._instance is None:
-            cls._instance = super().__new__(cls)
-        return cls._instance
-
     def __init__(self):
         db_name = "notes.db"
         dir_path = NotesDB.get_dir_path()

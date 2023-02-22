@@ -4,7 +4,7 @@ from PyQt5.QtGui import QFont, QIcon
 from PyQt5 import QtWidgets
 import os
 import qdarktheme
-from backend import NotesDB
+from backend import NotesDB, get_instance
 
 
 # Import the converted .ui file
@@ -39,7 +39,7 @@ db_path = os.path.join(dir_path, db_name)
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
-    app.lastWindowClosed.connect(NotesDB().vacuum_db)
+    app.lastWindowClosed.connect(get_instance().vacuum_db)
     #download_before_starting()
 
     if True:

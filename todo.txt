@@ -13,8 +13,8 @@ TODO:
         installation
 
 BUGS:
-    search note, when removing highlight saves the note
-        it happens after changing the font size
+    list widget font size different in Windows
+    combo box colors acually registered in windows
         
 
 FUTURE:

@@ -15,7 +15,7 @@ from PyQt5.QtGui import (
 )
 from PyQt5.QtWidgets import QDesktopWidget, QDialog, QMessageBox, QLineEdit
 
-from backend import NotesDB
+from backend import NotesDB, get_instance
 
 
 class MyLineEdit(QLineEdit):
@@ -99,7 +99,6 @@ class Ui_MainWindow(object):
             2, QBrush(Qt.GlobalColor.red), Qt.ItemDataRole.TextColorRole
         )
 
-        self.comboBox_fontcolor.setStyleSheet
         self.horizontalLayout_3.addWidget(self.comboBox_fontcolor)
         # ComboBox Font Color
         # self.comboBox_fontcolor = QtWidgets.QComboBox(self.centralwidget)
@@ -239,7 +238,7 @@ class Ui_MainWindow(object):
         self.add_data_listview()
         self.listWidget.setFocus()
 
-    note_db = NotesDB()
+    note_db = get_instance()
 
     saved_flag = False
 
