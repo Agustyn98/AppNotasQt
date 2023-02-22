@@ -240,12 +240,12 @@ class Ui_MainWindow(object):
 
         if self.dont_update_list > 0:
             if self.edittext_changed:
-                #print("Youre editing the QEditText, therefore not refreshing. \n")
+                print("Youre editing the QEditText, therefore not refreshing. \n")
                 self.edittext_changed = False
                 return
 
         self.edittext_changed = False
-        #print("Refreshing listview\n")
+        print("Refreshing listview\n")
 
         if saved_flag:
             current_item_data = self.listWidget.currentItem().data(QtCore.Qt.UserRole)
@@ -450,6 +450,7 @@ class Ui_MainWindow(object):
     def clear_searchall(self):
         search = self.lineEdit_searchall.text()
         if len(search) <= 0:
+            self.dont_update_list = 0
             self.add_data_listview()
 
     def newOnkeyPressEvent(self, event: QKeyEvent):
