@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import datetime
-import time
+import platform
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import QRegularExpression, Qt
@@ -98,6 +98,9 @@ class Ui_MainWindow(object):
         # Workaround for Windows bug where listwidget font will stay small for some reason
         listWidget_font = self.listWidget.font()
         listWidget_font.setPointSize(self._textedit_font)
+        if platform.system() == "Windows":
+            listWidget_font.setWeight(62)
+
         self.listWidget.setFont(listWidget_font)
 
         self.horizontalLayout.addWidget(self.listWidget)
