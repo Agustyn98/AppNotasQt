@@ -217,6 +217,7 @@ class Ui_MainWindow(object):
 
     dont_update_list = 0
 
+    pin_icon = QIcon(f"{self.icons_path}pin.png")
     def add_data_listview(self, saved_flag=False, search_all_flag=False):
         """Refresh listview"""
 
@@ -244,11 +245,10 @@ class Ui_MainWindow(object):
         else:
             list_of_notes = self.note_db.get_list_of_notes()
 
-        icon = QIcon(f"{self.icons_path}pin.png")
         for note in list_of_notes:
             item_to_add = QtWidgets.QListWidgetItem()
             if note[4] == 1:
-                item_to_add.setIcon(icon)
+                item_to_add.setIcon(self.pin_icon)
             item_to_add.setText(note[1])
             item_to_add.setData(QtCore.Qt.UserRole, (note[0], note[4]))
             self.listWidget.addItem(item_to_add)
@@ -388,7 +388,6 @@ class Ui_MainWindow(object):
 
     def search_in_note(self):
         word = self.lineEdit_searchnote.text()
-
         if len(word) < 1:
             return
 
@@ -554,7 +553,6 @@ class Ui_MainWindow(object):
 
 from PyQt5.QtWidgets import QDialog, QLabel, QVBoxLayout
 
-
 class MyDialog(QDialog):
     def __init__(self, id, created, last_mod, num_of_chars, parent=None):
         super(MyDialog, self).__init__(parent)
@@ -591,16 +589,6 @@ class MyDialog(QDialog):
         label = QLabel(text)
         layout.addWidget(label)
         self.setLayout(layout)
-        # layout = QVBoxLayout(self)
-        # label1 = QLabel(f"database id: {id}")
-        # layout.addWidget(label1)
-        # label2 = QLabel(f"date created: {created}")
-        # layout.addWidget(label2)
-        # label3 = QLabel(f"date last modified: {last_mod}")
-        # layout.addWidget(label3)
-        # label4 = QLabel(f"Number of characters: {num_of_chars}")
-        # layout.addWidget(label4)
-
 
 class ShortcutsDialog(QDialog):
     def __init__(self):
