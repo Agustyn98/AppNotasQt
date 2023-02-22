@@ -32,7 +32,7 @@ class NotesDB:
         self.cursor.execute("PRAGMA synchronous = OFF;")
         self.conn.execute("PRAGMA temp_store = 2;")
         self.conn.execute("PRAGMA journal_mode = OFF")
-        self.conn.execute("PRAGMA cache_size = -200000")
+        self.conn.execute("PRAGMA cache_size = -300000")
         self.conn.commit()
 
     @staticmethod
