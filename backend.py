@@ -14,24 +14,26 @@ def get_instance():
         
 class NotesDB:
     def __init__(self):
-        db_name = "notes.db"
-        dir_path = NotesDB.get_dir_path()
-        db_path = os.path.join(dir_path, db_name)
+        db_path = self.get_db_path()
         self.create_config()
-        print(f"connecting to database at: {db_path}")
         self.conn = sqlite3.connect(db_path)
-        # Create a new, in-memory database
         self.cursor = self.conn.cursor()
+        self._configure_db()
+        self.create_table()
 
+    app_dir = ""
+
+    def get_db_path(self):
+        db_name = "notes.db"
+        dir_path = self.get_dir_path()
+        return os.path.join(dir_path, db_name)
+
+    def _configure_db(self):
         self.cursor.execute("PRAGMA synchronous = OFF;")
         self.conn.execute("PRAGMA temp_store = 2;")
         self.conn.execute("PRAGMA journal_mode = OFF")
         self.conn.execute("PRAGMA cache_size = 50000")
         self.conn.commit()
-
-        self.create_table()
-
-    app_dir = ""
 
     @staticmethod
     def get_dir_path() -> str:

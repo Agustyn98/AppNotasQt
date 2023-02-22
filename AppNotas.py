@@ -33,9 +33,7 @@ def read_font_size() -> int:
                 return 16
 
 
-db_name = "notes.db"
-dir_path = NotesDB.get_dir_path()
-db_path = os.path.join(dir_path, db_name)
+db_path = NotesDB().get_db_path()
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
