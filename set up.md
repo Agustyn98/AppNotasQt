@@ -3,7 +3,7 @@ pip install -r requirements.txt
 
 Build the project
 pyinstaller AppNotas.py
-pyinstaller --noconsole --windowed --icon=icons/app_icon.jpg
+pyinstaller --noconsole --windowed --icon=icons/app_icon.jpg AppNotas.py
 
 (Running the app creates the .appnotas folder automatically)
 
