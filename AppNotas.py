@@ -39,7 +39,7 @@ db_path = os.path.join(dir_path, db_name)
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
-    #app.lastWindowClosed.connect(upload_before_quitting)
+    app.lastWindowClosed.connect(NotesDB().vacuum_db)
     #download_before_starting()
 
     if True:

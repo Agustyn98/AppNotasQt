@@ -1,7 +1,8 @@
+# Location: /home/user/.local/share/applications
 [Desktop Entry]
 Type=Application
 Name=AppNotas
 Comment=Simple Note Taking Application
 Categories=Utility,Office;
 Exec=/full/path/to/exec
-Icon=/home/user/.appnotas/icons/app_notas.jpg
+Icon=/home/user/.appnotas/icons/app_icon.jpg
