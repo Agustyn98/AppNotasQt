@@ -83,11 +83,11 @@ class Ui_MainWindow(object):
         self.comboBox_fontcolor.addItem("Font Color")
         self.icons_path = f"{NotesDB.get_dir_path()}/icons/"
         self.comboBox_fontcolor.addItem(QIcon(f"{self.icons_path}red.png"), "Red", None)
-        self.comboBox_fontcolor.addItem(QIcon(f"{self.icons_path}/green.png"), "Green", None)
-        self.comboBox_fontcolor.addItem(QIcon(f"{self.icons_path}/blue.png"), "Blue", None)
-        self.comboBox_fontcolor.addItem(QIcon(f"{self.icons_path}/yellow.png"), "Yellow", None)
-        self.comboBox_fontcolor.addItem(QIcon(f"{self.icons_path}/purple.png"), "Purple", None)
-        self.comboBox_fontcolor.addItem(QIcon(f"{self.icons_path}/white.png"), "White", None)
+        self.comboBox_fontcolor.addItem(QIcon(f"{self.icons_path}green.png"), "Green", None)
+        self.comboBox_fontcolor.addItem(QIcon(f"{self.icons_path}blue.png"), "Blue", None)
+        self.comboBox_fontcolor.addItem(QIcon(f"{self.icons_path}yellow.png"), "Yellow", None)
+        self.comboBox_fontcolor.addItem(QIcon(f"{self.icons_path}purple.png"), "Purple", None)
+        self.comboBox_fontcolor.addItem(QIcon(f"{self.icons_path}white.png"), "White", None)
 
         self.comboBox.setItemData(
             3, QColor(255, 0, 0), QtCore.Qt.ItemDataRole.TextColorRole
@@ -271,7 +271,7 @@ class Ui_MainWindow(object):
         else:
             list_of_notes = self.note_db.get_list_of_notes()
 
-        icon = QIcon("icons/pin.png")
+        icon = QIcon(f"{self.icons_path}pin.png")
         for note in list_of_notes:
             item_to_add = QtWidgets.QListWidgetItem()
             if note[4] == 1:
