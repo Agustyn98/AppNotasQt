@@ -11,7 +11,6 @@ from PyQt5.QtGui import (
     QKeySequence,
     QTextCharFormat,
     QTextCursor,
-    QBrush,
 )
 from PyQt5.QtWidgets import QDesktopWidget, QDialog, QMessageBox, QLineEdit
 
@@ -35,11 +34,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         self.MainWindow = MainWindow
         self.MainWindow.keyPressEvent = self.newOnkeyPressEvent
-        # font = QtGui.QFont()
-        # font.setPointSize(14)
-        # MainWindow.setFont(font)
         self.read_config()
-        # self.MainWindow.resize(800, 600)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.centralwidget)
@@ -60,16 +55,7 @@ class Ui_MainWindow(object):
         self.comboBox.addItem("")
         self.comboBox.addItem("")
         self.horizontalLayout_3.addWidget(self.comboBox)
-        # Title label
-        # self.main_label = QLabel(self.centralwidget)
-        # self.main_label.setText("<html><font color='Magenta'>AppNotas</font></html>")
-        # self.main_label.setStyleSheet("border: 1px solid white;")
-        # self.main_label.setTextFormat(Qt.RichText)
-        # self.main_label.setAlignment(Qt.AlignCenter)
-        # self.horizontalLayout_3.addWidget(self.main_label)
-
         # Search note lineEdits
-        # self.lineEdit_searchnote = QtWidgets.QLineEdit(self.centralwidget)
         self.lineEdit_searchnote = MyLineEdit(self.centralwidget, self)
         self.lineEdit_searchnote.setObjectName("lineEdit_searchnote")
         self.horizontalLayout_3.addWidget(self.lineEdit_searchnote)
@@ -91,10 +77,6 @@ class Ui_MainWindow(object):
 
 
         self.horizontalLayout_3.addWidget(self.comboBox_fontcolor)
-        # ComboBox Font Color
-        # self.comboBox_fontcolor = QtWidgets.QComboBox(self.centralwidget)
-        # self.comboBox_fontcolor.setMaximumWidth(120)
-        # self.horizontalLayout_3.addWidget(self.comboBox_fontcolor)
         # Buttons
         self.checkbox_pin = QtWidgets.QCheckBox("🏱", self.centralwidget)
         self.checkbox_pin.setTristate(False)
@@ -112,7 +94,7 @@ class Ui_MainWindow(object):
         # Qlistwidget
         self.listWidget = QtWidgets.QListWidget(self.centralwidget)
         self.listWidget.setAlternatingRowColors(True)
-        self.listWidget.setStyleSheet("QListWidget:focus { border: 1px solid #F166FF}")
+        self.listWidget.setStyleSheet("QListWidget::item { padding-top: 6; padding-bottom: 6px; } QListWidget:focus { border: 1px solid #F166FF}")
         # Workaround for Windows bug where listwidget font will stay small for some reason
         listWidget_font = self.listWidget.font()
         listWidget_font.setPointSize(self._textedit_font)
@@ -180,7 +162,6 @@ class Ui_MainWindow(object):
         )
         self.lineEdit_searchall.textChanged.connect(lambda: self.clear_searchall())
 
-        # self.listWidget.itemClicked.connect(lambda: self.check_changes_before_leaving())
         self.listWidget.currentItemChanged.connect(
             lambda x, previous: self.set_textedit_text(
                 x.data(QtCore.Qt.UserRole), previous_obj=previous
@@ -240,12 +221,12 @@ class Ui_MainWindow(object):
 
         if self.dont_update_list > 0:
             if self.edittext_changed:
-                print("Youre editing the QEditText, therefore not refreshing. \n")
+                #print("Youre editing the QEditText, therefore not refreshing. \n")
                 self.edittext_changed = False
                 return
 
         self.edittext_changed = False
-        print("Refreshing listview\n")
+        #print("Refreshing listview\n")
 
         if saved_flag:
             current_item_data = self.listWidget.currentItem().data(QtCore.Qt.UserRole)
@@ -355,10 +336,9 @@ class Ui_MainWindow(object):
             if self.listWidget.currentItem() is not None:
                 data = self.listWidget.currentItem().data(QtCore.Qt.UserRole)
                 id = data[0]
-                # msgBox = QtWidgets.QMessageBox.warning(None, 'Confirmation', "Delete " + self.lineEdit_title.text()[:20] + ".. ?", QMessageBox.Yes | QMessageBox.No)
                 msgBox = QtWidgets.QMessageBox()
                 msgBox.setWindowTitle("Confirmation")
-                msgBox.setText("Delete " + self.lineEdit_title.text()[:20] + ".. ?")
+                msgBox.setText("Delete " + self.lineEdit_title.text()[:22] + "?")
                 msgBox.setIcon(QMessageBox.Warning)
                 msgBox.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
                 return_value = msgBox.exec()
