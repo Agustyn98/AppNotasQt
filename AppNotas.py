@@ -57,7 +57,7 @@ if __name__ == "__main__":
                 "primary>list.selectionBackground": "9D479F",
                 "primary>list.inactiveSelectionBackground": "#9D479F",
                 "primary>list.inactiveSelectionBackground": "#783E7A",
-                "input.background": "202124",
+                "input.background": "#202124",
             }
         )
 
