@@ -119,12 +119,14 @@ class Ui_MainWindow(object):
         # QTextEdit
         self.textEdit = QtWidgets.QTextEdit(self.centralwidget)
         self.textEdit.setAcceptRichText(False)
+        if self._auto_bullets:
+            self.textEdit.setAutoFormatting(QtWidgets.QTextEdit.AutoFormattingFlag.AutoBulletList)
         self.textEdit.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         font = QtGui.QFont()
         if self._textedit_font is not None:
             font.setPointSize(self._textedit_font)
         else:
-            font.setPointSize(18)
+            font.setPointSize(17)
         self.textEdit.setFont(font)
         self.textEdit.setStyleSheet("QTextEdit { padding: 6px; }")
         self.textEdit.setObjectName("textEdit")
@@ -531,6 +533,7 @@ class Ui_MainWindow(object):
 
     _textedit_font = None
     _case_sensitive_search = False
+    _auto_bullets = False
 
     def read_config(self):
         config_path = NotesDB.config_path
@@ -551,6 +554,8 @@ class Ui_MainWindow(object):
                         self.center_screen()
                 elif config == "case_sensitive_search":
                     self._case_sensitive_search = True if value == "true" else False
+                elif config == "auto_bullets":
+                    self._auto_bullets = True if value == "true" else False
 
 
 from PyQt5.QtWidgets import QDialog, QLabel, QVBoxLayout

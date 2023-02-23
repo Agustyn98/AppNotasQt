@@ -64,7 +64,7 @@ class NotesDB:
         if not os.path.exists(NotesDB.config_path):
             with open(NotesDB.config_path, "w") as f:
                 f.write(
-                    "font_size:18\ncase_sensitive_search:false\nwindow_size:900x700\nwindow_center:true\n"
+                    "font_size:17\nauto_bullets:true\ncase_sensitive_search:false\nwindow_size:900x600\nwindow_center:true\n"
                 )
 
         # print(f' CREATED CONFIG AT {self.config_path}')
