@@ -431,6 +431,7 @@ class Ui_MainWindow(object):
             cursor.setPosition(0, QTextCursor.MoveAnchor)
             cursor.setPosition(len(self.textEdit.toPlainText()), QTextCursor.KeepAnchor)
             cursor.mergeCharFormat(format)
+            self.textEdit.document().clearUndoRedoStacks()
 
     def clear_searchall(self):
         search = self.lineEdit_searchall.text()
