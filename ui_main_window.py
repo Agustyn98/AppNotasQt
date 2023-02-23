@@ -94,6 +94,7 @@ class Ui_MainWindow(object):
         # Qlistwidget
         self.listWidget = QtWidgets.QListWidget(self.centralwidget)
         self.listWidget.setAlternatingRowColors(True)
+        self.listWidget.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.listWidget.setStyleSheet("QListWidget::item { padding-top: 6; padding-bottom: 6px; } QListWidget:focus { border: 1px solid #F166FF}")
         # Workaround for Windows bug where listwidget font will stay small for some reason
         listWidget_font = self.listWidget.font()
@@ -118,6 +119,7 @@ class Ui_MainWindow(object):
         # QTextEdit
         self.textEdit = QtWidgets.QTextEdit(self.centralwidget)
         self.textEdit.setAcceptRichText(False)
+        self.textEdit.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         font = QtGui.QFont()
         if self._textedit_font is not None:
             font.setPointSize(self._textedit_font)
