@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import sys
-from PyQt5.QtGui import QFont, QIcon
-from PyQt5 import QtWidgets
+from PyQt6.QtGui import QFont, QIcon
+from PyQt6 import QtWidgets
 import os
 import qdarktheme
 from backend import NotesDB, get_instance
@@ -68,4 +68,4 @@ if __name__ == "__main__":
 
     window = MainWindow()
     window.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

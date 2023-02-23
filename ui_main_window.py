@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import datetime
 
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtCore import QRegularExpression, Qt
-from PyQt5.QtGui import (
+from PyQt6 import QtCore, QtGui, QtWidgets
+from PyQt6.QtCore import QRegularExpression, Qt
+from PyQt6.QtGui import (
     QColor,
     QIcon,
     QKeyEvent,
@@ -11,7 +11,7 @@ from PyQt5.QtGui import (
     QTextCharFormat,
     QTextCursor,
 )
-from PyQt5.QtWidgets import QDesktopWidget, QDialog, QMessageBox, QLineEdit
+from PyQt6.QtWidgets import QDialog, QMessageBox, QLineEdit
 
 from backend import NotesDB, get_instance
 
@@ -170,7 +170,7 @@ class Ui_MainWindow(object):
 
         self.listWidget.currentItemChanged.connect(
             lambda x, previous: self.set_textedit_text(
-                x.data(QtCore.Qt.UserRole), previous_obj=previous
+                x.data(Qt.ItemDataRole.UserRole), previous_obj=previous
             )
             if x is not None
             else x
@@ -181,25 +181,25 @@ class Ui_MainWindow(object):
             lambda x: self.clear_highlighted_background()
         )
 
-        self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+B"), self)
+        self.shortcut = QtGui.QShortcut(QKeySequence("Ctrl+B"), self)
         self.shortcut.activated.connect(lambda: self.change_font_type("bold"))
-        self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+I"), self)
+        self.shortcut = QtGui.QShortcut(QKeySequence("Ctrl+I"), self)
         self.shortcut.activated.connect(lambda: self.change_font_type("italic"))
-        self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+S"), self)
+        self.shortcut = QtGui.QShortcut(QKeySequence("Ctrl+S"), self)
         self.shortcut.activated.connect(lambda: self.combobox_changed(txt="Save"))
-        self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+N"), self)
+        self.shortcut = QtGui.QShortcut(QKeySequence("Ctrl+N"), self)
         self.shortcut.activated.connect(lambda: self.combobox_changed(txt="New"))
-        self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+D"), self)
+        self.shortcut = QtGui.QShortcut(QKeySequence("Ctrl+D"), self)
         self.shortcut.activated.connect(lambda: self.combobox_changed(txt="Delete"))
-        self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+F"), self)
+        self.shortcut = QtGui.QShortcut(QKeySequence("Ctrl+F"), self)
         self.shortcut.activated.connect(lambda: self.lineEdit_searchnote.setFocus())
-        self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+G"), self)
+        self.shortcut = QtGui.QShortcut(QKeySequence("Ctrl+G"), self)
         self.shortcut.activated.connect(lambda: self.lineEdit_searchall.setFocus())
-        self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+P"), self)
+        self.shortcut = QtGui.QShortcut(QKeySequence("Ctrl+P"), self)
         self.shortcut.activated.connect(lambda: self.checkbox_pin_activated())
-        self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+M"), self)
+        self.shortcut = QtGui.QShortcut(QKeySequence("Ctrl+M"), self)
         self.shortcut.activated.connect(lambda: self.comboBox.showPopup())
-        self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+Shift+F"), self)
+        self.shortcut = QtGui.QShortcut(QKeySequence("Ctrl+Shift+F"), self)
         self.shortcut.activated.connect(lambda: self.comboBox_fontcolor.showPopup())
 
         self.textEdit.textChanged.connect(lambda: self.unsaved_changes_text())
@@ -235,7 +235,7 @@ class Ui_MainWindow(object):
         #print("Refreshing listview\n")
 
         if saved_flag:
-            current_item_data = self.listWidget.currentItem().data(QtCore.Qt.UserRole)
+            current_item_data = self.listWidget.currentItem().data(Qt.ItemDataRole.UserRole)
             current_id = current_item_data[0]
             self.saved_flag = True
 
@@ -254,12 +254,12 @@ class Ui_MainWindow(object):
             if note[4] == 1:
                 item_to_add.setIcon(self.pin_icon)
             item_to_add.setText(note[1])
-            item_to_add.setData(QtCore.Qt.UserRole, (note[0], note[4]))
+            item_to_add.setData(Qt.ItemDataRole.UserRole, (note[0], note[4]))
             self.listWidget.addItem(item_to_add)
 
         if saved_flag:
             for item_index in range(self.listWidget.count()):
-                item_data = self.listWidget.item(item_index).data(QtCore.Qt.UserRole)
+                item_data = self.listWidget.item(item_index).data(Qt.ItemDataRole.UserRole)
                 id = item_data[0]
                 if id == current_id:
                     self.listWidget.setCurrentRow(item_index)
@@ -269,7 +269,7 @@ class Ui_MainWindow(object):
 
     def refresh_pin_checkbox(self):
         self.checkbox_pin.blockSignals(True)
-        current_item_data = self.listWidget.currentItem().data(QtCore.Qt.UserRole)
+        current_item_data = self.listWidget.currentItem().data(Qt.ItemDataRole.UserRole)
         pin = current_item_data[1]
         if pin == 1:
             self.checkbox_pin.setChecked(True)
@@ -291,7 +291,7 @@ class Ui_MainWindow(object):
         id = metadata[0]
 
         if previous_obj is not None:
-            previous_obj = previous_obj.data(QtCore.Qt.UserRole)
+            previous_obj = previous_obj.data(Qt.ItemDataRole.UserRole)
             # print(f'previous obj is not none, its {previous_obj}, and current id is {id}')
             if id != previous_obj[0]:
                 self.dont_update_list = 0
@@ -329,7 +329,7 @@ class Ui_MainWindow(object):
             self.note_db.add_note()
             self.add_data_listview()
             for item_index in range(self.listWidget.count()):
-                item_data = self.listWidget.item(item_index).data(QtCore.Qt.UserRole)
+                item_data = self.listWidget.item(item_index).data(Qt.ItemDataRole.UserRole)
                 pin = item_data[1]
                 if pin == 0:
                     self.listWidget.setCurrentRow(item_index)
@@ -339,7 +339,7 @@ class Ui_MainWindow(object):
         elif txt == "Delete":
             # self.note_db.delete_note()
             if self.listWidget.currentItem() is not None:
-                data = self.listWidget.currentItem().data(QtCore.Qt.UserRole)
+                data = self.listWidget.currentItem().data(Qt.ItemDataRole.UserRole)
                 id = data[0]
                 msgBox = QtWidgets.QMessageBox()
                 msgBox.setWindowTitle("Confirmation")
@@ -440,7 +440,7 @@ class Ui_MainWindow(object):
             self.add_data_listview()
 
     def newOnkeyPressEvent(self, event: QKeyEvent):
-        if event.modifiers() == Qt.ControlModifier and event.key() == Qt.Key_Tab:
+        if event.modifiers() == Qt.KeyboardModifier.ControlModifier and event.key() == Qt.Key.Key_Tab:
             if self.textEdit.hasFocus():
                 self.listWidget.setFocus()
             elif self.lineEdit_title.hasFocus():
@@ -527,6 +527,7 @@ class Ui_MainWindow(object):
             self.checkbox_pin.setText("🏱")
 
     def center_screen(self):
+        return
         qr = self.frameGeometry()
         cp = QDesktopWidget().availableGeometry().center()
         qr.moveCenter(cp)
@@ -559,7 +560,7 @@ class Ui_MainWindow(object):
                     self._auto_bullets = True if value == "true" else False
 
 
-from PyQt5.QtWidgets import QDialog, QLabel, QVBoxLayout
+from PyQt6.QtWidgets import QDialog, QLabel, QVBoxLayout
 
 class MyDialog(QDialog):
     def __init__(self, id, created, last_mod, num_of_chars, parent=None):
