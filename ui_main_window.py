@@ -446,7 +446,7 @@ class Ui_MainWindow(object):
             elif self.lineEdit_title.hasFocus():
                 self.textEdit.setFocus()
                 cursor = self.textEdit.textCursor()
-                cursor.movePosition(QtGui.QTextCursor.End)
+                cursor.movePosition(QtGui.QTextCursor.MoveOperation.End)
                 self.textEdit.setTextCursor(cursor)
 
             elif self.listWidget.hasFocus():
@@ -481,11 +481,11 @@ class Ui_MainWindow(object):
             current_note_last_mod_formatted,
             num_of_chars,
         )
-        new_window.exec_()
+        new_window.exec()
 
     def open_help_dialog(self):
         new_window = ShortcutsDialog()
-        new_window.exec_()
+        new_window.exec()
 
     def change_font_type(self, type="bold"):
         if type == "bold":
