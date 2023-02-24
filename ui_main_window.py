@@ -161,6 +161,8 @@ class Ui_MainWindow(object):
             _translate("MainWindow", "Search Note")
         )
 
+        self.html_header = f'<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">\n<html><head><meta name="qrichtext" content="1" /><style type="text/css">\np, li {{ white-space: pre-wrap; }}\n</style></head><body style=" font-family:\'sans-serif\'; font-size:{self._textedit_font}pt; font-weight:400; font-style:normal;">'
+
         self.comboBox.currentTextChanged.connect(lambda x: self.combobox_changed(x))
 
         self.lineEdit_searchall.returnPressed.connect(
@@ -284,6 +286,7 @@ class Ui_MainWindow(object):
 
     current_note_created = current_note_last_mod = current_note_id = None
 
+
     def set_textedit_text(self, metadata, previous_obj=None):
         """Current item in listWidget changed"""
         # print('current item changed inlistwidget')
@@ -307,7 +310,8 @@ class Ui_MainWindow(object):
         note = self.note_db.get_note_by_id(id)
 
         # This line causes lag loading a large note depending on the wrapping mode
-        self.textEdit.setHtml(note[2])
+        full_html = f"{self.html_header}{note[2]}"
+        self.textEdit.setHtml(full_html)
 
         self.lineEdit_title.blockSignals(True)
         self.lineEdit_title.clear()
