@@ -656,6 +656,7 @@ class ShortcutsDialog(QDialog):
             "<li><b>Ctrl M</b> -> Open Menu</li>"
             "<li><b>Ctrl Shift F</b> -> Open font color menu</li>"
             "<li><b>Ctrl B</b> -> Bold text</li>"
+            "<li><b>Ctrl U</b> -> Underline text</li>"
             "<li><b>Ctrl I</b> -> Italic text</li>"
             f"<h4>Configuration and DB: {NotesDB.app_dir}</h4>"
             f"<p style='text-align: center;'>Delete the config file to reset it</p>"
