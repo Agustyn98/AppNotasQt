@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from PyQt5.QtWidgets import QDialog, QLabel, QVBoxLayout
 import datetime
 
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -67,12 +68,18 @@ class Ui_MainWindow(object):
         # self.comboBox_fontsize.setMaximumWidth(150)
         self.comboBox_fontcolor.addItem("Font Color")
         self.icons_path = f"{NotesDB.get_dir_path()}/icons/"
-        self.comboBox_fontcolor.addItem(QIcon(f"{self.icons_path}red.png"), "Red", None)
-        self.comboBox_fontcolor.addItem(QIcon(f"{self.icons_path}green.png"), "Green", None)
-        self.comboBox_fontcolor.addItem(QIcon(f"{self.icons_path}blue.png"), "Blue", None)
-        self.comboBox_fontcolor.addItem(QIcon(f"{self.icons_path}yellow.png"), "Yellow", None)
-        self.comboBox_fontcolor.addItem(QIcon(f"{self.icons_path}purple.png"), "Purple", None)
-        self.comboBox_fontcolor.addItem(QIcon(f"{self.icons_path}white.png"), "White", None)
+        self.comboBox_fontcolor.addItem(
+            QIcon(f"{self.icons_path}red.png"), "Red", None)
+        self.comboBox_fontcolor.addItem(
+            QIcon(f"{self.icons_path}green.png"), "Green", None)
+        self.comboBox_fontcolor.addItem(
+            QIcon(f"{self.icons_path}blue.png"), "Blue", None)
+        self.comboBox_fontcolor.addItem(
+            QIcon(f"{self.icons_path}yellow.png"), "Yellow", None)
+        self.comboBox_fontcolor.addItem(
+            QIcon(f"{self.icons_path}purple.png"), "Purple", None)
+        self.comboBox_fontcolor.addItem(
+            QIcon(f"{self.icons_path}white.png"), "White", None)
         # Pin icon
         self.pin_icon = QIcon(f"{self.icons_path}pin.png")
 
@@ -94,8 +101,10 @@ class Ui_MainWindow(object):
         # Qlistwidget
         self.listWidget = QtWidgets.QListWidget(self.centralwidget)
         self.listWidget.setAlternatingRowColors(True)
-        self.listWidget.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        self.listWidget.setStyleSheet("QListWidget::item { padding-top: 6; padding-bottom: 6px; } QListWidget:focus { border: 1px solid #F166FF}")
+        self.listWidget.setVerticalScrollBarPolicy(
+            Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.listWidget.setStyleSheet(
+            "QListWidget::item { padding-top: 6; padding-bottom: 6px; } QListWidget:focus { border: 1px solid #F166FF}")
         # Workaround for Windows bug where listwidget font will stay small for some reason
         listWidget_font = self.listWidget.font()
         listWidget_font.setPointSize(self._textedit_font)
@@ -120,8 +129,10 @@ class Ui_MainWindow(object):
         self.textEdit = QtWidgets.QTextEdit(self.centralwidget)
         self.textEdit.setAcceptRichText(False)
         if self._auto_bullets:
-            self.textEdit.setAutoFormatting(QtWidgets.QTextEdit.AutoFormattingFlag.AutoBulletList)
-        self.textEdit.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+            self.textEdit.setAutoFormatting(
+                QtWidgets.QTextEdit.AutoFormattingFlag.AutoBulletList)
+        self.textEdit.setVerticalScrollBarPolicy(
+            Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         font = QtGui.QFont()
         if self._textedit_font is not None:
             font.setPointSize(self._textedit_font)
@@ -163,12 +174,14 @@ class Ui_MainWindow(object):
 
         self.html_header = f'<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">\n<html><head><meta name="qrichtext" content="1" /><style type="text/css">\np, li {{ white-space: pre-wrap; }}\n</style></head><body style=" font-family:\'sans-serif\'; font-size:{self._textedit_font}pt; font-weight:400; font-style:normal;">'
 
-        self.comboBox.currentTextChanged.connect(lambda x: self.combobox_changed(x))
+        self.comboBox.currentTextChanged.connect(
+            lambda x: self.combobox_changed(x))
 
         self.lineEdit_searchall.returnPressed.connect(
             lambda: self.add_data_listview(search_all_flag=True)
         )
-        self.lineEdit_searchall.textChanged.connect(lambda: self.clear_searchall())
+        self.lineEdit_searchall.textChanged.connect(
+            lambda: self.clear_searchall())
 
         self.listWidget.currentItemChanged.connect(
             lambda x, previous: self.set_textedit_text(
@@ -178,31 +191,41 @@ class Ui_MainWindow(object):
             else x
         )
 
-        self.lineEdit_searchnote.returnPressed.connect(lambda: self.search_in_note())
+        self.lineEdit_searchnote.returnPressed.connect(
+            lambda: self.search_in_note())
         self.lineEdit_searchnote.textChanged.connect(
             lambda x: self.clear_highlighted_background()
         )
 
         self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+B"), self)
         self.shortcut.activated.connect(lambda: self.change_font_type("bold"))
+        self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+U"), self)
+        self.shortcut.activated.connect(lambda: self.change_font_type("underline"))
         self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+I"), self)
-        self.shortcut.activated.connect(lambda: self.change_font_type("italic"))
+        self.shortcut.activated.connect(
+            lambda: self.change_font_type("italic"))
         self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+S"), self)
-        self.shortcut.activated.connect(lambda: self.combobox_changed(txt="Save"))
+        self.shortcut.activated.connect(
+            lambda: self.combobox_changed(txt="Save"))
         self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+N"), self)
-        self.shortcut.activated.connect(lambda: self.combobox_changed(txt="New"))
+        self.shortcut.activated.connect(
+            lambda: self.combobox_changed(txt="New"))
         self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+D"), self)
-        self.shortcut.activated.connect(lambda: self.combobox_changed(txt="Delete"))
+        self.shortcut.activated.connect(
+            lambda: self.combobox_changed(txt="Delete"))
         self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+F"), self)
-        self.shortcut.activated.connect(lambda: self.lineEdit_searchnote.setFocus())
+        self.shortcut.activated.connect(
+            lambda: self.lineEdit_searchnote.setFocus())
         self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+G"), self)
-        self.shortcut.activated.connect(lambda: self.lineEdit_searchall.setFocus())
+        self.shortcut.activated.connect(
+            lambda: self.lineEdit_searchall.setFocus())
         self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+P"), self)
         self.shortcut.activated.connect(lambda: self.checkbox_pin_activated())
         self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+M"), self)
         self.shortcut.activated.connect(lambda: self.comboBox.showPopup())
         self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+Shift+F"), self)
-        self.shortcut.activated.connect(lambda: self.comboBox_fontcolor.showPopup())
+        self.shortcut.activated.connect(
+            lambda: self.comboBox_fontcolor.showPopup())
 
         self.textEdit.textChanged.connect(lambda: self.unsaved_changes_text())
         self.lineEdit_title.textChanged.connect(
@@ -229,12 +252,12 @@ class Ui_MainWindow(object):
 
         if self.dont_update_list > 0:
             if self.edittext_changed:
-                #print("Youre editing the QEditText, therefore not refreshing. \n")
+                # print("Youre editing the QEditText, therefore not refreshing. \n")
                 self.edittext_changed = False
                 return
 
         self.edittext_changed = False
-        #print("Refreshing listview\n")
+        # print("Refreshing listview\n")
 
         if saved_flag:
             current_item_data = self.listWidget.currentItem().data(QtCore.Qt.UserRole)
@@ -261,7 +284,8 @@ class Ui_MainWindow(object):
 
         if saved_flag:
             for item_index in range(self.listWidget.count()):
-                item_data = self.listWidget.item(item_index).data(QtCore.Qt.UserRole)
+                item_data = self.listWidget.item(
+                    item_index).data(QtCore.Qt.UserRole)
                 id = item_data[0]
                 if id == current_id:
                     self.listWidget.setCurrentRow(item_index)
@@ -285,7 +309,6 @@ class Ui_MainWindow(object):
     changing_listwidgetitem_flag = 0
 
     current_note_created = current_note_last_mod = current_note_id = None
-
 
     def set_textedit_text(self, metadata, previous_obj=None):
         """Current item in listWidget changed"""
@@ -324,7 +347,8 @@ class Ui_MainWindow(object):
 
     def combobox_changed(self, txt):
         if txt == "Save":
-            self.note_db.update_note(self.current_note_id, self.textEdit.toHtml())
+            self.note_db.update_note(
+                self.current_note_id, self.textEdit.toHtml())
             # print("saved text!")
             self.add_data_listview(saved_flag=True)
             self.dont_update_list = 1
@@ -333,7 +357,8 @@ class Ui_MainWindow(object):
             self.note_db.add_note()
             self.add_data_listview()
             for item_index in range(self.listWidget.count()):
-                item_data = self.listWidget.item(item_index).data(QtCore.Qt.UserRole)
+                item_data = self.listWidget.item(
+                    item_index).data(QtCore.Qt.UserRole)
                 pin = item_data[1]
                 if pin == 0:
                     self.listWidget.setCurrentRow(item_index)
@@ -347,7 +372,8 @@ class Ui_MainWindow(object):
                 id = data[0]
                 msgBox = QtWidgets.QMessageBox()
                 msgBox.setWindowTitle("Confirmation")
-                msgBox.setText("Delete " + self.lineEdit_title.text()[:22] + "?")
+                msgBox.setText(
+                    "Delete " + self.lineEdit_title.text()[:22] + "?")
                 msgBox.setIcon(QMessageBox.Warning)
                 msgBox.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
                 return_value = msgBox.exec()
@@ -409,7 +435,8 @@ class Ui_MainWindow(object):
         if self._case_sensitive_search:
             re = QRegularExpression(word)
         else:
-            re = QRegularExpression(word, QRegularExpression.CaseInsensitiveOption)
+            re = QRegularExpression(
+                word, QRegularExpression.CaseInsensitiveOption)
 
         i = re.globalMatch(
             self.textEdit.toPlainText()
@@ -433,7 +460,8 @@ class Ui_MainWindow(object):
             format = QTextCharFormat()
             format.setBackground(QColor(32, 33, 36))
             cursor.setPosition(0, QTextCursor.MoveAnchor)
-            cursor.setPosition(len(self.textEdit.toPlainText()), QTextCursor.KeepAnchor)
+            cursor.setPosition(
+                len(self.textEdit.toPlainText()), QTextCursor.KeepAnchor)
             cursor.mergeCharFormat(format)
             self.textEdit.document().clearUndoRedoStacks()
 
@@ -465,7 +493,8 @@ class Ui_MainWindow(object):
         self.add_data_listview(saved_flag=True)
 
     def save_note_title(self):
-        self.note_db.update_note_title(self.current_note_id, self.lineEdit_title.text())
+        self.note_db.update_note_title(
+            self.current_note_id, self.lineEdit_title.text())
         # print("saved title!")
         self.add_data_listview(saved_flag=True)
         self.dont_update_list = 1
@@ -492,17 +521,25 @@ class Ui_MainWindow(object):
         new_window.exec_()
 
     def change_font_type(self, type="bold"):
+        cursor = self.textEdit.textCursor()
+        cursor.setPosition(cursor.selectionStart() + 1)
         if type == "bold":
             normal_weight = 50
             bold_weight = 80
-            current_font_weight = self.textEdit.fontWeight()
+            current_font_weight = cursor.charFormat().fontWeight()
+
             if current_font_weight <= normal_weight:
                 self.textEdit.setFontWeight(bold_weight)
             else:
                 self.textEdit.setFontWeight(normal_weight)
         elif type == "italic":
-            is_italic = self.textEdit.fontItalic()
-            self.textEdit.setFontItalic(not is_italic)
+            current_font_italic = cursor.charFormat().fontItalic()
+            self.textEdit.setFontItalic(not current_font_italic)
+        elif type == "underline":
+            current_font_underline = cursor.charFormat().fontUnderline()
+            self.textEdit.setFontUnderline(not current_font_underline)
+
+
 
     def change_selection_fontcolor(self, color="White"):
         # self.textEdit.setFontPointSize(int(selected_size))
@@ -553,7 +590,8 @@ class Ui_MainWindow(object):
                     self._textedit_font = int(value)
                 elif config == "window_size":
                     last_sizes = value.split("x")
-                    self.MainWindow.resize(int(last_sizes[0]), int(last_sizes[1]))
+                    self.MainWindow.resize(
+                        int(last_sizes[0]), int(last_sizes[1]))
                 elif config == "window_center":
                     if value == "true":
                         self.center_screen()
@@ -562,8 +600,6 @@ class Ui_MainWindow(object):
                 elif config == "auto_bullets":
                     self._auto_bullets = True if value == "true" else False
 
-
-from PyQt5.QtWidgets import QDialog, QLabel, QVBoxLayout
 
 class MyDialog(QDialog):
     def __init__(self, id, created, last_mod, num_of_chars, parent=None):
@@ -601,6 +637,7 @@ class MyDialog(QDialog):
         label = QLabel(text)
         layout.addWidget(label)
         self.setLayout(layout)
+
 
 class ShortcutsDialog(QDialog):
     def __init__(self):
