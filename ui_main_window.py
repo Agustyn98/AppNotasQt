@@ -200,7 +200,8 @@ class Ui_MainWindow(object):
         self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+B"), self)
         self.shortcut.activated.connect(lambda: self.change_font_type("bold"))
         self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+U"), self)
-        self.shortcut.activated.connect(lambda: self.change_font_type("underline"))
+        self.shortcut.activated.connect(
+            lambda: self.change_font_type("underline"))
         self.shortcut = QtWidgets.QShortcut(QKeySequence("Ctrl+I"), self)
         self.shortcut.activated.connect(
             lambda: self.change_font_type("italic"))
@@ -538,8 +539,6 @@ class Ui_MainWindow(object):
         elif type == "underline":
             current_font_underline = cursor.charFormat().fontUnderline()
             self.textEdit.setFontUnderline(not current_font_underline)
-
-
 
     def change_selection_fontcolor(self, color="White"):
         # self.textEdit.setFontPointSize(int(selected_size))
