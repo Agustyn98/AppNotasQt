@@ -1,21 +1,26 @@
-Install the dependencies:
-pip install -r requirements.txt
+## Setup
+### Dependencies
 
-Build the project
-pyinstaller AppNotas.py
-pyinstaller --noconsole --windowed --icon=icons/app_icon.jpg AppNotas.py
+Install the dependencies by running:
 
-(Running the app creates the .appnotas folder automatically)
+`pip install -r requirements.txt`
 
-On linux, create an .appnotas dir in your home directory
-mkdir ~/.appnotas
-
-On windows create it in C:\User\<user>\AppData\Local\appnotas
-
-Copy the icons there
-cp icons ~/.appnotas/ -r
+### Build the project
+`pyinstaller --noconsole --windowed --icon=icons/app_icon.jpg AppNotas.py`
 
 
-The executable is dist/AppNotas/AppNotas
-On linux, modify the .desktop and copy it to ~/.local/share/applications
-On windows, right click the .exe and pin it to the start menu
+### Running the app
+The executable is located at dist/AppNotas/AppNotas.
+
+On Linux, modify the .desktop file and copy it to ~/.local/share/applications to get a shortcut
+
+On Windows, right-click the .exe file and pin it to the start menu.
+
+
+### Icons
+
+Create the .appnotas folder if it's not already there
+
+`cp icons ~/.appnotas/ -r`
+
+On Windows, create it in C:\User\<user>\AppData\Local\appnotas.
