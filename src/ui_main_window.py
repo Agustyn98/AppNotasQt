@@ -523,7 +523,9 @@ class Ui_MainWindow(object):
 
     def change_font_type(self, type="bold"):
         cursor = self.textEdit.textCursor()
-        cursor.setPosition(cursor.selectionStart() + 1)
+        text_cursor = self.textEdit.textCursor()
+        if text_cursor.selectionStart() != text_cursor.selectionEnd():
+            cursor.setPosition(cursor.selectionStart() + 1)
         if type == "bold":
             normal_weight = 50
             bold_weight = 80
